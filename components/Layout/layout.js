@@ -1,13 +1,39 @@
 import Icon from '@chakra-ui/icon';
-import { Badge, Box, Container, Stack, Text, Button } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Container,
+  Stack,
+  Text,
+  Button,
+  Drawer,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerBody,
+} from '@chakra-ui/react';
 import Head from 'next/head';
 import ThemeToggleButton from '../theme-toggle-button';
-import NextLink from 'next/link'
-
+import NextLink from 'next/link';
+import { Store } from '../../libs/Store';
+import { useDisclosure } from '@chakra-ui/hooks';
 import { BsCart2 } from 'react-icons/bs';
 import { useColorModeValue } from '@chakra-ui/color-mode';
+import { useContext, useRef } from 'react';
+import ShoppingCart from '../products/shopping-cart';
 
 const Layout = ({ title, children }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = useRef();
+
+  const { state, dispatch } = useContext(Store);
+
+  const { cart: {
+    cartItems
+  } } = state;
+
   return (
     <>
       <Box as='main'>
@@ -27,24 +53,66 @@ const Layout = ({ title, children }) => {
         >
           <Stack direction='row' justifyContent='space-between' px={10}>
             <Stack>
-            <Button  p={2} size='sm' variant='link'>
-            <NextLink href='/products'>
-              <Text fontSize='lg' fontWeight='normal'>Items</Text>
-            </NextLink>
-            </Button>
+              <Button p={2} size='sm' variant='link'>
+                <NextLink href='/products'>
+                  <Text fontSize='lg' fontWeight='normal'>
+                    Items
+                  </Text>
+                </NextLink>
+              </Button>
             </Stack>
             <Stack>
               <Text>Logo</Text>
             </Stack>
             <Stack direction='row' position='relative' spacing={5}>
               <ThemeToggleButton />
-              <Icon as={BsCart2} h={8} w={8} />
-              <Badge borderRadius='100%' position='absolute' top='-3' left='16'>
-                2
-              </Badge>
+              <Icon
+                ref={btnRef}
+                onClick={onOpen}
+                as={BsCart2}
+                cursor='pointer'
+                h={8}
+                w={8}
+              />
+              {cartItems.length > 0 ? (
+                <Badge
+                  borderRadius='100%'
+                  position='absolute'
+                  top='-3'
+                  left='16'
+                >
+                  {cartItems.length}
+                </Badge>
+              ) : (
+                <></>
+              )}
             </Stack>
           </Stack>
         </Box>
+        <Drawer
+          isOpen={isOpen}
+          placement='right'
+          onClose={onClose}
+          finalFocusRef={btnRef}
+        >
+          <DrawerOverlay />
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Current shopping cart</DrawerHeader>
+            <DrawerBody>
+              {cartItems.map((item) => (
+                <ShoppingCart key={item.id} item={item} />
+              ))}
+            </DrawerBody>
+            <DrawerFooter>
+              <Text fontSize='xl' pr={6}>
+            Total: $
+                    {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
+              </Text>
+              <Button>Checkout</Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </Drawer>
 
         <Container p={0} m={0}>
           {children}

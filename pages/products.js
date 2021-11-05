@@ -13,6 +13,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import db from '../libs/db';
 import Product from '../models/Products';
+import { useColorModeValue } from '@chakra-ui/color-mode';
 
 const Categories = ['Hoodies', 'T-shirt', 'Pants', 'Shoes', 'Accessories'];
 
@@ -42,7 +43,6 @@ const Products = (props) => {
           </Box>
         </Stack>
         <SimpleGrid
-          spacingx={2}
           pt={5}
           px={10}
           width='100%'
@@ -60,22 +60,36 @@ const Products = (props) => {
                   }}
                   key={item.name}
                   cursor='pointer'
-                  backgroundColor='white'
-                  border='1px solid black'
+                  backgroundColor={useColorModeValue('white', 'gray.700')}
+                  border={useColorModeValue('1px solid black', '')}
                   borderRadius='10px'
                   width={{ base: '110px', md: '200px', lg: '250px' }}
                   height={{ base: '240px', md: '340px', lg: '340px' }}
-                  boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 3)'
+                  // boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 1)'
                 >
                   <Box align='center' mt={5}>
                     <Image src={item.image} height={220} width={220} />
                   </Box>
                   <Stack direction='column' pl={2}>
                     <Stack direction='column'>
-                      <Text fontSize='md' fontWeight='medium' color='black'>
+                      <Text
+                        fontSize='md'
+                        fontWeight='medium'
+                        color={useColorModeValue(
+                          'blackAlpha.900',
+                          'whiteAlpha.900'
+                        )}
+                      >
                         {item.name}
                       </Text>
-                      <Text fontSize='md' fontWeight='bold' color='black'>
+                      <Text
+                        fontSize='md'
+                        fontWeight='bold'
+                        color={useColorModeValue(
+                          'blackAlpha.700',
+                          'whiteAlpha.700'
+                        )}
+                      >
                         ${item.price}
                       </Text>
                     </Stack>
