@@ -9,7 +9,11 @@ const initialState = {
       ? JSON.parse(Cookies.get('cartItems'))
       : [],
   },
-};
+  products: {
+    allProducts: [],
+    filteredProducts: []
+  },
+}
 
 function reducer(state, action) {
   switch (action.type) {
@@ -33,6 +37,10 @@ function reducer(state, action) {
       })
       Cookies.set('cartItems', JSON.stringify(cartItems))
       return { ...state, cart: {...state.cart, cartItems}}
+    }
+    case 'ADD_PRODUCTS': {
+      const products = action.payload
+      return {...state, products: {...state.products, products }}
     }
     default:
       return state;

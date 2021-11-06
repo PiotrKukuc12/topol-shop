@@ -107,7 +107,8 @@ const Layout = ({ title, children }) => {
             <DrawerFooter>
               <Text fontSize='xl' pr={6}>
             Total: $
-                    {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
+            {Math.round((cartItems.reduce((a, c) => a + c.quantity * c.price, 0) + Number.EPSILON) * 100) / 100}
+                    {/* {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} */}
               </Text>
               <Button>Checkout</Button>
             </DrawerFooter>

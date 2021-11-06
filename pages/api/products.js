@@ -6,8 +6,10 @@ const handler = nextConnect()
 
 handler.get(async (req, res) => {
     try{
+        const queryLimit = parseInt(req.query._limit)
+        const skipLimit = parseInt(req.query._skip)
         await db.Connect()
-        const prod = await  Product.find({ })
+        const prod = await Product.find({}, null, { skip: skipLimit, limit: queryLimit })
         await db.Disconnect()
         res.status(200).json(prod)
     } catch (error) {
