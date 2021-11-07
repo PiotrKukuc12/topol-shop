@@ -20,11 +20,10 @@ import dynamic from 'next/dynamic';
 
 const Categories = ['Hoodies', 'T-shirt', 'Pants', 'Shoes', 'Accessories'];
 
-const PROD_URL = 'https://topol-shop.vercel.app/'
-const URL = 'https://localhost:3000/'
 
 
 const Products = (props) => {
+
   const { products, leng } = props;
 
   const [posts, setPosts] = useState(products);
@@ -36,7 +35,7 @@ const Products = (props) => {
 
   const getMorePost = async () => {
     const res = await fetch(
-      `${PROD_URL}/api/products?_skip=${posts.length}&_limit=10`
+      `/api/products?_skip=${posts.length}&_limit=10`
     );
     const newPosts = await res.json();
     setPosts((post) => [...post, ...newPosts]);
