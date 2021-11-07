@@ -5,7 +5,7 @@ import {
   UnorderedList,
   ListItem,
   Box,
-  SimpleGrid,
+  Spinner,
 } from '@chakra-ui/react';
 import Layout from '../components/Layout/layout';
 import Image from 'next/image';
@@ -13,32 +13,22 @@ import NextLink from 'next/link';
 import db from '../libs/db';
 import Product from '../models/Products';
 import { useContext, useState } from 'react';
-import { Store } from '../libs/Store';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import dynamic from 'next/dynamic';
 
 const Categories = ['Hoodies', 'T-shirt', 'Pants', 'Shoes', 'Accessories'];
 
-
-
 const Products = (props) => {
-
   const { products, leng } = props;
 
-  const [posts, setPosts] = useState(products);
-  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState(products);
 
-  console.log('prod: ', posts.length, "leng", leng)
-
-  const { state, dispatch } = useContext(Store);
 
   const getMorePost = async () => {
-    const res = await fetch(
-      `/api/products?_skip=${posts.length}&_limit=10`
-    );
+    const res = await fetch(`/api/products?_skip=${items.length}&_limit=10`);
     const newPosts = await res.json();
-    setPosts((post) => [...post, ...newPosts]);
+    setItems((post) => [...post, ...newPosts]);
   };
 
   return (
@@ -73,9 +63,20 @@ const Products = (props) => {
         <InfiniteScroll
           dataLength={leng}
           next={getMorePost}
-          hasMore={leng !== posts.length ? true : false}
-          loader={<h3>Loading...</h3>}
-          endMessage={<h4 style={{ width: '100%'}}>No more</h4>}
+          hasMore={leng !== items.length ? true : false}
+          loader={
+            <Spinner
+              thickness='4px'
+              speed='0.65s'
+              emptyColor='gray.200'
+              color='blue.500'
+              size='xl'
+              align='center'
+              justifyContent='center'
+              margin={10}
+            />
+          }
+          endMessage={<h4 style={{ width: '100%' }}>No more</h4>}
           style={{
             marginLeft: '20px',
             display: 'flex',
@@ -84,7 +85,7 @@ const Products = (props) => {
             justifyContent: 'center',
           }}
         >
-          {posts.map((item) => (
+          {items.map((item) => (
             <div key={item._id}>
               <NextLink href={`/product/${item._id}`}>
                 <Stack
@@ -134,6 +135,7 @@ const Products = (props) => {
               </NextLink>
             </div>
           ))}
+          
         </InfiniteScroll>
       </Stack>
     </Layout>
@@ -143,13 +145,12 @@ const Products = (props) => {
 export async function getServerSideProps() {
   await db.Connect();
   const products = await Product.find({}, null, { limit: 10 }).lean();
-  const leng = await Product.count()
-
+  const leng = await Product.count();
 
   return {
     props: {
       products: products.map(db.convertDocToObj),
-      leng: leng
+      leng: leng,
     },
   };
 }

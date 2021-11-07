@@ -30,9 +30,9 @@ const Layout = ({ title, children }) => {
 
   const { state, dispatch } = useContext(Store);
 
-  const { cart: {
-    cartItems
-  } } = state;
+  const {
+    cart: { cartItems },
+  } = state;
 
   return (
     <>
@@ -106,9 +106,13 @@ const Layout = ({ title, children }) => {
             </DrawerBody>
             <DrawerFooter>
               <Text fontSize='xl' pr={6}>
-            Total: $
-            {Math.round((cartItems.reduce((a, c) => a + c.quantity * c.price, 0) + Number.EPSILON) * 100) / 100}
-                    {/* {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} */}
+                Total: $
+                {Math.round(
+                  (cartItems.reduce((a, c) => a + c.quantity * c.price, 0) +
+                    Number.EPSILON) *
+                    100
+                ) / 100}
+                {/* {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} */}
               </Text>
               <Button>Checkout</Button>
             </DrawerFooter>

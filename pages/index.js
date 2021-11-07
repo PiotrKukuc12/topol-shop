@@ -9,10 +9,10 @@ const Index = () => {
           <Text fontSize='lg' color='whiteAlpha.700'>
             Case study
           </Text>
-          <Heading fontSize='4xl' color='whiteAlpha.900'>
+          <Heading fontSize={{base:'3xl',lg:'4xl'}} color='whiteAlpha.900'>
             Aesthetic. Minimalist. Rebel.
           </Heading>
-          <Text color='whiteAlpha.700' fontSize='xl'>
+          <Text color='whiteAlpha.700' fontSize={{base: 'md', md:'xl'}}>
             A new minimalist streetwear brand builr entirely from scratch.{' '}
             <br /> From naming to the veri fist collection.
           </Text>
