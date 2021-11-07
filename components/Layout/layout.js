@@ -62,7 +62,9 @@ const Layout = ({ title, children }) => {
               </Button>
             </Stack>
             <Stack>
-              <Text>Logo</Text>
+              <NextLink href='/'>
+                <Text>Logo</Text>
+              </NextLink>
             </Stack>
             <Stack direction='row' position='relative' spacing={5}>
               <ThemeToggleButton />
