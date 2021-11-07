@@ -12,7 +12,7 @@ const ShoppingCart = ({ item }) => {
         dispatch({ type: 'CART_DELETE_ITEM', payload: item._id})
     }
   return (
-      <>
+      <div key={item._id}>
     <Stack ml={5} direction='row' mt={5}>
       <Box>
         <Image
@@ -25,7 +25,7 @@ const ShoppingCart = ({ item }) => {
       </Box>
       <Stack direction='column' width='55%'>
         <Stack direction='row' justifyContent='space-between'>
-          <Text fontSize='lg'>{item.name}</Text>
+          <Text fontSize='medium'>{item.name}</Text>
           <IconButton onClick={handleDeleteButton} icon={<DeleteIcon />} />
         </Stack>
         <Text py={0}>${item.price}</Text>
@@ -37,7 +37,7 @@ const ShoppingCart = ({ item }) => {
       </Stack>
     </Stack>
       <Divider pt={2} mx={5} />
-      </>
+      </div>
   );
 };
 

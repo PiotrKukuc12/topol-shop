@@ -48,7 +48,7 @@ const Layout = ({ title, children }) => {
             'whiteAlpha.700',
             'whiteAlpha.100'
           )}
-          width='100vw'
+          width='100%'
           height='70px'
         >
           <Stack direction='row' justifyContent='space-between' px={10}>
@@ -67,7 +67,7 @@ const Layout = ({ title, children }) => {
             <Stack direction='row' position='relative' spacing={5}>
               <ThemeToggleButton />
               <Icon
-                ref={btnRef}
+                // ref={btnRef}
                 onClick={onOpen}
                 as={BsCart2}
                 cursor='pointer'
@@ -101,7 +101,7 @@ const Layout = ({ title, children }) => {
             <DrawerHeader>Current shopping cart</DrawerHeader>
             <DrawerBody>
               {cartItems.map((item) => (
-                <ShoppingCart key={item.id} item={item} />
+                <ShoppingCart item={item} />
               ))}
             </DrawerBody>
             <DrawerFooter>
