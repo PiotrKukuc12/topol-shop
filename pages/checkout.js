@@ -1,144 +1,211 @@
+import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import {
-  Box,
-  Heading,
-  Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
-  Input,
-  RadioGroup,
-  Stack,
-  Radio,
-} from '@chakra-ui/react';
-import { useState } from 'react';
+} from '@chakra-ui/form-control';
+import { Input } from '@chakra-ui/input';
+import { Box, Heading, Stack } from '@chakra-ui/layout';
+import { Field, Form, Formik } from 'formik';
 import Layout from '../components/Layout/layout';
 
 const Checkout = () => {
-  const [delivery, setDelivery] = useState(null);
-  const [payment, setPayment] = useState(null);
-  const [address, setAdress] = useState({
-    fullName: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    country: '',
-  });
-
   return (
     <Layout title='Checkout'>
-      <Stack maxW='xl' mx='auto'>
-        <Heading fontSize='3xl' textAlign='left' mt={5}>
-          1.Shipping Address
-        </Heading>
-        <FormControl
+      <Stack
+        width='100vw'
+        direction={{ base: 'column', md: 'row' }}
+        align='center'
+        justifyContent='space-around'
+      >
+        <Box
+          mt={5}
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           p={5}
           borderRadius='5px'
-          mt={2}
+          width={{ base: '80%', md: '40%' }}
         >
-          <FormLabel>Full Name</FormLabel>
-          <Input
-            onChange={(e) =>
-              setAdress({
-                ...address,
-                fullName: e.target.value,
-              })
-            }
-            type='text'
-            placeholder='John Doe'
-            required
-            variant='outline'
-          />
-          <FormLabel>Address</FormLabel>
-          <Input
-            onChange={(e) =>
-              setAdress({
-                ...address,
-                address: e.target.value,
-              })
-            }
-            type='text'
-            placeholder='Awenue 66/12'
-            required
-            variant='outline'
-          />
-          <FormLabel>City</FormLabel>
-          <Input
-            onChange={(e) =>
-              setAdress({
-                ...address,
-                city: e.target.value,
-              })
-            }
-            type='text'
-            placeholder='Berlin'
-            required
-            variant='outline'
-          />
-          <FormLabel>Postal Code</FormLabel>
-          <Input
-            onChange={(e) =>
-              setAdress({
-                ...address,
-                postalCode: e.target.value,
-              })
-            }
-            type='number'
-            placeholder='67-112'
-            required
-            variant='outline'
-          />
-          <FormLabel>Country</FormLabel>
-          <Input
-            onChange={(e) =>
-              setAdress({
-                ...address,
-                country: e.target.value,
-              })
-            }
-            type='text'
-            placeholder='Deutschland'
-            required
-            variant='outline'
-          />
-          <FormLabel>Delivery</FormLabel>
-          <RadioGroup
-            required
-            onChange={setDelivery}
-            value={delivery}
-            p={2}
-            borderRadius={5}
-            backgroundColor={useColorModeValue(
-              'blackAlpha.50',
-              'whiteAlpha.50'
-            )}
+          <Heading ml={5} mb={3}>
+            1. Address
+          </Heading>
+          <Formik
+            initialValues={{
+              fullName: '',
+              email: '',
+              address: '',
+              city: '',
+              postalCode: '',
+              country: '',
+            }}
+            validate={(values) => {
+              const errors = {};
+              if (!values.fullName) {
+                errors.fullName = 'Required';
+              }
+              if (!values.email) {
+                errors.email = 'Required';
+              } else if (
+                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)
+              ) {
+                errors.email = 'Invalid email address';
+              }
+
+              if (!values.address) {
+                errors.address = 'Required';
+              }
+
+              if (!values.city) {
+                errors.city = 'Required';
+              }
+              if (!values.postalCode) {
+                errors.postalCode = 'Required';
+              }
+              if (!values.country) {
+                errors.country = 'Required';
+              }
+
+              return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                alert(JSON.stringify(values, null, 2));
+                setSubmitting(false);
+              }, 400);
+            }}
           >
-            <Stack direction='row' spacing={10}>
-              <Radio value='inpost'>InPost</Radio>
-              <Radio value='courier'>Courier</Radio>
-            </Stack>
-          </RadioGroup>
-          <FormLabel>Payment</FormLabel>
-          <RadioGroup
-            required
-            onChange={setPayment}
-            value={payment}
-            p={2}
-            borderRadius={5}
-            backgroundColor={useColorModeValue(
-              'blackAlpha.50',
-              'whiteAlpha.50'
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <Form onSubmit={handleSubmit}>
+                {/* FULL NAME */}
+                <FormControl isInvalid={errors.fullName && touched.fullName}>
+                  <FormLabel htmlFor='fullName'>Full Name</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='text'
+                    name='fullName'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.fullName}
+                  />
+                  <FormErrorMessage>{errors.fullName}</FormErrorMessage>
+                </FormControl>
+                {/* EMAIL */}
+                <FormControl isInvalid={errors.email && touched.email}>
+                  <FormLabel htmlFor='email'>Email</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='email'
+                    name='email'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                  />
+                  <FormErrorMessage>{errors.email}</FormErrorMessage>
+                </FormControl>
+                {/* ADDRESS */}
+                <FormControl isInvalid={errors.address && touched.address}>
+                  <FormLabel htmlFor='address'>Address</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='text'
+                    name='address'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.address}
+                  />
+                  <FormErrorMessage>{errors.address}</FormErrorMessage>
+                </FormControl>
+                {/* CITY */}
+                <FormControl isInvalid={errors.city && touched.city}>
+                  <FormLabel htmlFor='city'>City</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='text'
+                    name='city'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.city}
+                  />
+                  <FormErrorMessage>{errors.city}</FormErrorMessage>
+                </FormControl>
+                {/* POSTAL CODE */}
+                <FormControl
+                  isInvalid={errors.postalCode && touched.postalCode}
+                >
+                  <FormLabel htmlFor='postalCode'>Postal Code</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='text'
+                    name='postalCode'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.postalCode}
+                  />
+                  <FormErrorMessage>{errors.postalCode}</FormErrorMessage>
+                </FormControl>
+                {/* COUNTRY */}
+                <FormControl isInvalid={errors.country && touched.country}>
+                  <FormLabel htmlFor='country'>Country</FormLabel>
+                  <Input
+                    borderColor={useColorModeValue(
+                      'blackAlpha.600',
+                      'whiteAlpha.600'
+                    )}
+                    type='text'
+                    name='country'
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.country}
+                  />
+                  <FormErrorMessage>{errors.country}</FormErrorMessage>
+                </FormControl>
+                <Button
+                  border={useColorModeValue(
+                    '1px solid black',
+                    '1px solid white'
+                  )}
+                  width='100%'
+                  mt={5}
+                  type='submit'
+                  isLoading={isSubmitting}
+                >
+                  Submit
+                </Button>
+              </Form>
             )}
-          >
-            <Stack direction='row' spacing={10}>
-              <Radio value='paypal'>Paypal</Radio>
-              <Radio value='cash'>Cash</Radio>
-            </Stack>
-          </RadioGroup>
-          <Button onClick={() => console.log(address)} mt={5} width='100%'>
-            Continue
-          </Button>
-        </FormControl>
+          </Formik>
+        </Box>
+        <Box
+          backgroundColor={useColorModeValue(
+            'blackAlpha.50',
+            'whiteAlpha.50'
+          )}
+          w='30%'
+          h='500px'
+        ></Box>
       </Stack>
     </Layout>
   );

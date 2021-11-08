@@ -17,6 +17,7 @@
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "axios": "^0.24.0",
+    "formik": "^2.2.9",
     "framer-motion": "^4.1.17",
     "js-cookie": "^3.0.1",
     "mongoose": "^5.13.13",

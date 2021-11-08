@@ -88,7 +88,6 @@ const Products = (props) => {
           {items.map((item) => (
             <div key={item._id}>
               <NextLink href={`/product/${item._id}`}>
-                <Tooltip placement='auto' label={item.name}>
                   <Stack
                     _hover={{
                       transform: 'scale(1.02)',
@@ -108,9 +107,13 @@ const Products = (props) => {
                     height={{ base: '240px', md: '300px', lg: '340px' }}
                     // boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 1)'
                   >
+                <Tooltip placement='auto' label={item.name}>
+
                     <Box align='center' mt={5}>
+                    
                       <Image src={item.image} height={220} width={220} />
                     </Box>
+                    </Tooltip>
                     <Stack direction='column' pl={2}>
                       <Stack direction='column'>
                         <Text
@@ -136,7 +139,6 @@ const Products = (props) => {
                       </Stack>
                     </Stack>
                   </Stack>
-                </Tooltip>
               </NextLink>
             </div>
           ))}
