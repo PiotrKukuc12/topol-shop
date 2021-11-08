@@ -4,7 +4,7 @@ import Layout from '../components/Layout/layout';
 const Index = () => {
   return (
     <Layout title='Home'>
-      <Box bgGradient="linear(to-t, blackAlpha.700, blackAlpha.800)" width='100vw' height='90vh'>
+      <Box bgGradient="linear(to-t, blackAlpha.700, blackAlpha.800)" width='100vw' height='95vh'>
         <Stack spacing={5} pt={100} px={20}>
           <Text fontSize='lg' color='whiteAlpha.700'>
             Case study

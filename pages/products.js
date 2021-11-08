@@ -6,6 +6,7 @@ import {
   ListItem,
   Box,
   Spinner,
+  Tooltip,
 } from '@chakra-ui/react';
 import Layout from '../components/Layout/layout';
 import Image from 'next/image';
@@ -23,7 +24,6 @@ const Products = (props) => {
   const { products, leng } = props;
 
   const [items, setItems] = useState(products);
-
 
   const getMorePost = async () => {
     const res = await fetch(`/api/products?_skip=${items.length}&_limit=10`);
@@ -88,54 +88,58 @@ const Products = (props) => {
           {items.map((item) => (
             <div key={item._id}>
               <NextLink href={`/product/${item._id}`}>
-                <Stack
-                  _hover={{
-                    transform: 'scale(1.02)',
-                    transition: 'transform .2s ease',
-                  }}
-                  key={item.name}
-                  cursor='pointer'
-                  marginTop={5}
-                  marginX={1}
-                  backgroundColor={useColorModeValue('white', 'gray.700')}
-                  border={useColorModeValue('1px solid black', '')}
-                  borderRadius='10px'
-                  width={{ base: '128px', md: '200px', lg: '250px' }}
-                  height={{ base: '240px', md: '300px', lg: '340px' }}
-                  // boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 1)'
-                >
-                  <Box align='center' mt={5}>
-                    <Image src={item.image} height={220} width={220} />
-                  </Box>
-                  <Stack direction='column' pl={2}>
-                    <Stack direction='column'>
-                      <Text
-                        fontSize={{ base: 'sm', md: 'md' }}
-                        fontWeight='medium'
-                        color={useColorModeValue(
-                          'blackAlpha.900',
-                          'whiteAlpha.900'
-                        )}
-                      >
-                        {item.name}
-                      </Text>
-                      <Text
-                        fontSize={{ base: 'sm', md: 'md', lg: 'lg' }}
-                        fontWeight='medium'
-                        color={useColorModeValue(
-                          'blackAlpha.700',
-                          'whiteAlpha.700'
-                        )}
-                      >
-                        ${item.price}
-                      </Text>
+                <Tooltip placement='auto' label={item.name}>
+                  <Stack
+                    _hover={{
+                      transform: 'scale(1.02)',
+                      transition: 'transform .2s ease',
+                    }}
+                    key={item.name}
+                    cursor='pointer'
+                    marginTop={5}
+                    marginX={1.5}
+                    backgroundColor={useColorModeValue(
+                      'white',
+                      'whiteAlpha.50'
+                    )}
+                    border={useColorModeValue('1px solid black', '')}
+                    borderRadius='10px'
+                    width={{ base: '128px', md: '200px', lg: '250px' }}
+                    height={{ base: '240px', md: '300px', lg: '340px' }}
+                    // boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 1)'
+                  >
+                    <Box align='center' mt={5}>
+                      <Image src={item.image} height={220} width={220} />
+                    </Box>
+                    <Stack direction='column' pl={2}>
+                      <Stack direction='column'>
+                        <Text
+                          fontSize={{ base: 'sm', md: 'md' }}
+                          fontWeight='medium'
+                          color={useColorModeValue(
+                            'blackAlpha.900',
+                            'whiteAlpha.900'
+                          )}
+                        >
+                          {item.name}
+                        </Text>
+                        <Text
+                          fontSize={{ base: 'sm', md: 'md', lg: 'lg' }}
+                          fontWeight='medium'
+                          color={useColorModeValue(
+                            'blackAlpha.700',
+                            'whiteAlpha.700'
+                          )}
+                        >
+                          ${item.price}
+                        </Text>
+                      </Stack>
                     </Stack>
                   </Stack>
-                </Stack>
+                </Tooltip>
               </NextLink>
             </div>
           ))}
-          
         </InfiniteScroll>
       </Stack>
     </Layout>

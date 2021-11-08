@@ -116,14 +116,16 @@ const Layout = ({ title, children }) => {
                 ) / 100}
                 {/* {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} */}
               </Text>
-              <Button>Checkout</Button>
+              <NextLink href='/checkout'>
+                <Button>Checkout</Button>
+              </NextLink>
             </DrawerFooter>
           </DrawerContent>
         </Drawer>
 
-        <Container p={0} m={0}>
+        <Box>
           {children}
-        </Container>
+        </Box>
       </Box>
     </>
   );
