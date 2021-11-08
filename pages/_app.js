@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { Spinner } from '@chakra-ui/spinner';
 import Layout from '../components/Layout/layout';
 import Fonts from '../components/fonts';
+import { Box } from '@chakra-ui/layout';
+
 
 const Website = ({ Component, pageProps }) => {
   const [loading, setLoading] = useState(false);
@@ -32,15 +34,15 @@ const Website = ({ Component, pageProps }) => {
       <StoreProvider>
         {loading ? (
           <Layout title='Loading'>
-            <Spinner
-              thickness='4px'
-              speed='0.65s'
-              emptyColor='gray.200'
-              color='blue.500'
-              size='xl'
-              marginLeft='50vw'
-              marginTop='40vh'
-            />
+            <Box w='100vw' mt='200px' display='flex' align='center' justifyContent='center'>
+              <Spinner
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+              />
+            </Box>
           </Layout>
         ) : (
           <Component {...pageProps} />

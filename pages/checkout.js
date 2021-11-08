@@ -6,7 +6,15 @@ import {
   FormLabel,
 } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import { Box, Heading, Stack } from '@chakra-ui/layout';
+import {
+  Box,
+  Divider,
+  Heading,
+  OrderedList,
+  Stack,
+  Text,
+} from '@chakra-ui/layout';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
 import { Field, Form, Formik } from 'formik';
 import Layout from '../components/Layout/layout';
 
@@ -20,10 +28,11 @@ const Checkout = () => {
         justifyContent='space-around'
       >
         <Box
+          mb={{ base: '10', md: '0' }}
           mt={5}
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           p={5}
-          borderRadius='5px'
+          borderRadius='10px'
           width={{ base: '80%', md: '40%' }}
         >
           <Heading ml={5} mb={3}>
@@ -50,11 +59,9 @@ const Checkout = () => {
               ) {
                 errors.email = 'Invalid email address';
               }
-
               if (!values.address) {
                 errors.address = 'Required';
               }
-
               if (!values.city) {
                 errors.city = 'Required';
               }
@@ -199,13 +206,100 @@ const Checkout = () => {
           </Formik>
         </Box>
         <Box
-          backgroundColor={useColorModeValue(
-            'blackAlpha.50',
-            'whiteAlpha.50'
-          )}
-          w='30%'
+          position='relative'
+          borderRadius='10px'
+          backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
+          w={{ base: '80%', md: '40%' }}
           h='500px'
-        ></Box>
+          mt='100px'
+        >
+          <Heading pt={5} textAlign='center'>
+            Bag Summary
+          </Heading>
+          <Stack mx={10} pt={5}>
+            <Box h='280px' overflowY='scroll'>
+              <Table size='sm'>
+                <Thead>
+                  <Tr>
+                    <Th>Name</Th>
+                    <Th isNumeric>Quantity</Th>
+                    <Th isNumeric>Price</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Even more blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>Blue shirt</Td>
+                    <Td isNumeric>5x</Td>
+                    <Td isNumeric>145.99</Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </Box>
+            <Stack w='80%' position='absolute' bottom='5'>
+              <Stack direction='row' justifyContent='space-between'>
+                <Text>Cost:</Text>
+                <Text>150$</Text>
+              </Stack>
+              <Stack direction='row' justifyContent='space-between'>
+                <Text>Shipping:</Text>
+                <Text>20$</Text>
+              </Stack>
+
+              <Divider
+                borderColor={useColorModeValue('white', 'whiteAlpha.500')}
+              />
+              <Stack direction='row' justifyContent='space-between'>
+                <Text fontSize='xl' fontWeight='bold'>Total:</Text>
+                <Text fontSize='xl' fontWeight='bold'>170$</Text>
+              </Stack>
+            </Stack>
+          </Stack>
+        </Box>
       </Stack>
     </Layout>
   );
