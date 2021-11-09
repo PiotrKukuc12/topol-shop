@@ -9,10 +9,11 @@ const initialState = {
       ? JSON.parse(Cookies.get('cartItems'))
       : [],
   },
-  products: {
-    allProducts: [],
-    filteredProducts: []
-  },
+  userInfo: {
+    address: Cookies.get('address')
+    ? JSON.parse(Cookies.get('address'))
+    : {}
+  }
 }
 
 function reducer(state, action) {
@@ -38,9 +39,11 @@ function reducer(state, action) {
       Cookies.set('cartItems', JSON.stringify(cartItems))
       return { ...state, cart: {...state.cart, cartItems}}
     }
-    case 'ADD_PRODUCTS': {
-      const products = action.payload
-      return {...state, products: {...state.products, products }}
+    case 'SAVE_SHIPPING_ADDRESS':{
+      return{
+        ...state,
+        userInfo: {...state.userInfo, address: action.payload}
+      }
     }
     default:
       return state;

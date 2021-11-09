@@ -1,24 +1,45 @@
 import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import {
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-} from '@chakra-ui/form-control';
-import { Input } from '@chakra-ui/input';
-import {
   Box,
   Divider,
   Heading,
-  OrderedList,
+  Input,
   Stack,
   Text,
-} from '@chakra-ui/layout';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/table';
-import { Field, Form, Formik } from 'formik';
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
+import { Form, Formik } from 'formik';
 import Layout from '../components/Layout/layout';
+import Cookies from 'js-cookie';
+import { Store } from '../libs/Store';
+import { useRouter } from 'next/router';
+import { useContext, useEffect, useState } from 'react';
 
 const Checkout = () => {
+  const { state, dispatch } = useContext(Store);
+
+  const {
+    cart: { cartItems },
+    userInfo: { address },
+  } = state;
+
+  const router = useRouter();
+
+  const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100; // 123.456 => 123.46
+  const itemsPrice = round2(
+    cartItems.reduce((a, c) => a + c.price * c.quantity, 0)
+  );
+  const shippingPrice = itemsPrice > 200 ? 0 : 15;
+  const totalPrice = round2(itemsPrice + shippingPrice);
   return (
     <Layout title='Checkout'>
       <Stack
@@ -39,14 +60,25 @@ const Checkout = () => {
             1. Address
           </Heading>
           <Formik
-            initialValues={{
-              fullName: '',
-              email: '',
-              address: '',
-              city: '',
-              postalCode: '',
-              country: '',
-            }}
+            initialValues={
+              address
+                ? {
+                    fullName: address.fullName,
+                    email: address.email,
+                    address: address.address,
+                    city: address.city,
+                    postalCode: address.postalCode,
+                    country: address.country,
+                  }
+                : {
+                    fullName: '',
+                    email: '',
+                    address: '',
+                    city: '',
+                    postalCode: '',
+                    country: '',
+                  }
+            }
             validate={(values) => {
               const errors = {};
               if (!values.fullName) {
@@ -75,10 +107,13 @@ const Checkout = () => {
               return errors;
             }}
             onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
+              dispatch({
+                type: 'SAVE_SHIPPING_ADDRESS',
+                payload: JSON.stringify(values),
+              });
+              Cookies.set('address', JSON.stringify(values));
+              setSubmitting(false);
+              router.push('/ordertype');
             }}
           >
             {({
@@ -99,6 +134,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='John Doe'
                     type='text'
                     name='fullName'
                     onChange={handleChange}
@@ -115,6 +151,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='johndoe@gmail.com'
                     type='email'
                     name='email'
                     onChange={handleChange}
@@ -131,6 +168,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='Awenuer 51'
                     type='text'
                     name='address'
                     onChange={handleChange}
@@ -147,6 +185,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='London'
                     type='text'
                     name='city'
                     onChange={handleChange}
@@ -165,6 +204,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='68-200'
                     type='text'
                     name='postalCode'
                     onChange={handleChange}
@@ -181,6 +221,7 @@ const Checkout = () => {
                       'blackAlpha.600',
                       'whiteAlpha.600'
                     )}
+                    placeholder='Great Britain'
                     type='text'
                     name='country'
                     onChange={handleChange}
@@ -217,7 +258,10 @@ const Checkout = () => {
             Bag Summary
           </Heading>
           <Stack mx={10} pt={5}>
-            <Box h='280px' overflowY='scroll'>
+            <Box
+              h='280px'
+              overflowY={cartItems.length >= 9 ? 'scroll' : 'none'}
+            >
               <Table size='sm'>
                 <Thead>
                   <Tr>
@@ -227,75 +271,36 @@ const Checkout = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Even more blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Blue shirt</Td>
-                    <Td isNumeric>5x</Td>
-                    <Td isNumeric>145.99</Td>
-                  </Tr>
+                  {cartItems.map((item) => (
+                    <Tr key={item._id}>
+                      <Td>{item.name}</Td>
+                      <Td isNumeric>{item.quantity}x</Td>
+                      <Td isNumeric>${item.price}</Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </Box>
             <Stack w='80%' position='absolute' bottom='5'>
               <Stack direction='row' justifyContent='space-between'>
                 <Text>Cost:</Text>
-                <Text>150$</Text>
+                <Text>{itemsPrice}$</Text>
               </Stack>
               <Stack direction='row' justifyContent='space-between'>
                 <Text>Shipping:</Text>
-                <Text>20$</Text>
+                <Text>{shippingPrice}$</Text>
               </Stack>
 
               <Divider
                 borderColor={useColorModeValue('white', 'whiteAlpha.500')}
               />
               <Stack direction='row' justifyContent='space-between'>
-                <Text fontSize='xl' fontWeight='bold'>Total:</Text>
-                <Text fontSize='xl' fontWeight='bold'>170$</Text>
+                <Text fontSize='xl' fontWeight='bold'>
+                  Total:
+                </Text>
+                <Text fontSize='xl' fontWeight='bold'>
+                  {totalPrice}$
+                </Text>
               </Stack>
             </Stack>
           </Stack>
