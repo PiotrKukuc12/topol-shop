@@ -32,6 +32,7 @@ const Checkout = () => {
     userInfo: { address },
   } = state;
 
+
   const router = useRouter();
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100; // 123.456 => 123.46
@@ -61,22 +62,22 @@ const Checkout = () => {
           </Heading>
           <Formik
             initialValues={
-              address
+              !address
                 ? {
+                    fullName: 'test',
+                    email: '',
+                    address: '',
+                    city: '',
+                    postalCode: '',
+                    country: '',
+                  }
+                : {
                     fullName: address.fullName,
                     email: address.email,
                     address: address.address,
                     city: address.city,
                     postalCode: address.postalCode,
                     country: address.country,
-                  }
-                : {
-                    fullName: '',
-                    email: '',
-                    address: '',
-                    city: '',
-                    postalCode: '',
-                    country: '',
                   }
             }
             validate={(values) => {
@@ -111,7 +112,7 @@ const Checkout = () => {
                 type: 'SAVE_SHIPPING_ADDRESS',
                 payload: JSON.stringify(values),
               });
-              Cookies.set('address', JSON.stringify(values));
+              // Cookies.set('address', JSON.stringify(values));
               setSubmitting(false);
               router.push('/ordertype');
             }}

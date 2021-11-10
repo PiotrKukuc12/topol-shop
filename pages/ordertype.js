@@ -15,6 +15,11 @@ const Ordertype = () => {
   const handleSubmit = () => {
       Cookies.set('payment', JSON.stringify(payment))
       Cookies.set('delivery', JSON.stringify(delivery))
+      if (delivery === 'InPost'){
+        router.push('/selectparcel')
+      } else {
+        router.push('/orderID')
+      }
   }
 
   return (
@@ -31,12 +36,12 @@ const Ordertype = () => {
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           borderRadius='10px'
           align='center'
-          width='400px'
+          width={{base:'70%', md:'400px'}}
           height='250px'
           border={useColorModeValue('1px solid gray', '1px solid white')}
         >
-          <Text fontSize='xl' py={5}>
-            Payment before shipment
+          <Text fontSize={{base:'lg',md:'xl'}} py={5}>
+            Pay before shipment
           </Text>
           <Button
             onClick={() => setDelivery('InPost')}
@@ -63,10 +68,10 @@ const Ordertype = () => {
           align='center'
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           border={useColorModeValue('1px solid gray', '1px solid white')}
-          width='400px'
+          width={{base:'70%', md:'400px'}}
           height='250px'
         >
-          <Text fontSize='xl' py={5}>
+          <Text fontSize={{base:'lg',md:'xl'}} py={5}>
             Cash on delivery
           </Text>
           <Button
@@ -87,8 +92,9 @@ const Ordertype = () => {
         }
         mx='auto'
         mt={10}
-        w='700px'
-        h='250px'
+        w={{base: '70%',md:'700px'}}
+        h='auto'
+        pb={10}
         borderRadius='10px'
         backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
         border={useColorModeValue('1px solid gray', '1px solid white')}
@@ -96,7 +102,7 @@ const Ordertype = () => {
         <Text align='center' my={5} fontSize='xl'>
           Payment
         </Text>
-        <Stack justifyContent='space-around' direction='row'>
+        <Stack justifyContent='space-around' align='center' direction={{base:'column',md:'row'}}>
           <Stack
             onClick={() => setPayment('PayPal')}
             cursor='pointer'

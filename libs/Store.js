@@ -40,6 +40,7 @@ function reducer(state, action) {
       return { ...state, cart: {...state.cart, cartItems}}
     }
     case 'SAVE_SHIPPING_ADDRESS':{
+      Cookies.set('address', JSON.stringify(action.payload));
       return{
         ...state,
         userInfo: {...state.userInfo, address: action.payload}

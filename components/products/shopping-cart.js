@@ -31,9 +31,11 @@ const ShoppingCart = ({ item }) => {
     <div key={item._id}>
       <Stack ml={5} direction='row' mt={5}>
         <Box>
-          <Image
+          <Image  
             src={item.image}
             alt={item.title}
+            placeholder='blur'
+            blurDataURL='/images/placeholderimage.png'
             width={120}
             objectFit='cover'
             height={130}

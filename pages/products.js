@@ -78,20 +78,20 @@ const Products = (props) => {
           hasMore={leng !== items.length ? true : false}
           loader={
             <Box m={100}>
-            <Spinner
-              position='absolute'
-              top='95%'
-              left='50%'
-              thickness='4px'
-              speed='0.65s'
-              emptyColor='gray.200'
-              color='blue.500'
-              size='xl'
-              align='center'
-              justifyContent='center'
-              marginx='200px'
-            />
-          </Box>
+              <Spinner
+                position='absolute'
+                top='95%'
+                left='50%'
+                thickness='4px'
+                speed='0.65s'
+                emptyColor='gray.200'
+                color='blue.500'
+                size='xl'
+                align='center'
+                justifyContent='center'
+                marginx='200px'
+              />
+            </Box>
           }
           endMessage={<h4 style={{ width: '100%' }}>No more</h4>}
           style={{
@@ -123,7 +123,13 @@ const Products = (props) => {
                 >
                   <Tooltip placement='auto' label={item.name}>
                     <Box align='center' mt={5}>
-                      <Image src={item.image} height={220} width={220} />
+                      <Image
+                        placeholder='blur'
+                        blurDataURL='images/placeholderimage.png'
+                        src={item.image}
+                        height={220}
+                        width={220}
+                      />
                     </Box>
                   </Tooltip>
                   <Stack direction='column' pl={2}>
@@ -154,7 +160,6 @@ const Products = (props) => {
               </NextLink>
             </div>
           ))}
-        
         </InfiniteScroll>
       </Stack>
     </Layout>
