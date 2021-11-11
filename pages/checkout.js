@@ -110,9 +110,9 @@ const Checkout = () => {
             onSubmit={(values, { setSubmitting }) => {
               dispatch({
                 type: 'SAVE_SHIPPING_ADDRESS',
-                payload: JSON.stringify(values),
+                payload: values,
               });
-              // Cookies.set('address', JSON.stringify(values));
+              Cookies.set('address', JSON.stringify(values));
               setSubmitting(false);
               router.push('/ordertype');
             }}

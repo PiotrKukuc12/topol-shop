@@ -1,26 +1,49 @@
 import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { Box, Heading, Stack, Text, Icon } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Layout from '../components/Layout/layout';
 import { BsPaypal, BsCreditCardFill } from 'react-icons/bs';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import axios from 'axios';
+import { Store } from '../libs/Store';
 
 const Ordertype = () => {
   const router = useRouter();
+  const { state, dispatch } = useContext(Store);
+
+  const {
+    cart: { cartItems },
+    userInfo: { address },
+  } = state;
+
+
+
+
+
   const [delivery, setDelivery] = useState(null);
   const [payment, setPayment] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-      Cookies.set('payment', JSON.stringify(payment))
-      Cookies.set('delivery', JSON.stringify(delivery))
-      if (delivery === 'InPost'){
-        router.push('/selectparcel')
-      } else {
-        router.push('/orderID')
-      }
-  }
+  const handleSubmit = async () => {
+    Cookies.set('payment', JSON.stringify(payment));
+    Cookies.set('delivery', JSON.stringify(delivery));
+    if (delivery === 'InPost') {
+      router.push('/selectparcel');
+    } else {
+      setLoading(true);
+      const { data } = await axios.post('api/order', {
+        orderItems: cartItems,
+        shippingAddress: address,
+        paymentMethod: payment ? payment : 'Cash',
+        // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
+      });
+      // clear cookies
+      setLoading(false);
+      router.push(`/order/${data._id}`);
+    }
+  };
 
   return (
     <Layout title='Order'>
@@ -36,11 +59,11 @@ const Ordertype = () => {
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           borderRadius='10px'
           align='center'
-          width={{base:'70%', md:'400px'}}
+          width={{ base: '70%', md: '400px' }}
           height='250px'
           border={useColorModeValue('1px solid gray', '1px solid white')}
         >
-          <Text fontSize={{base:'lg',md:'xl'}} py={5}>
+          <Text fontSize={{ base: 'lg', md: 'xl' }} py={5}>
             Pay before shipment
           </Text>
           <Button
@@ -68,10 +91,10 @@ const Ordertype = () => {
           align='center'
           backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
           border={useColorModeValue('1px solid gray', '1px solid white')}
-          width={{base:'70%', md:'400px'}}
+          width={{ base: '70%', md: '400px' }}
           height='250px'
         >
-          <Text fontSize={{base:'lg',md:'xl'}} py={5}>
+          <Text fontSize={{ base: 'lg', md: 'xl' }} py={5}>
             Cash on delivery
           </Text>
           <Button
@@ -92,7 +115,7 @@ const Ordertype = () => {
         }
         mx='auto'
         mt={10}
-        w={{base: '70%',md:'700px'}}
+        w={{ base: '70%', md: '700px' }}
         h='auto'
         pb={10}
         borderRadius='10px'
@@ -102,7 +125,11 @@ const Ordertype = () => {
         <Text align='center' my={5} fontSize='xl'>
           Payment
         </Text>
-        <Stack justifyContent='space-around' align='center' direction={{base:'column',md:'row'}}>
+        <Stack
+          justifyContent='space-around'
+          align='center'
+          direction={{ base: 'column', md: 'row' }}
+        >
           <Stack
             onClick={() => setPayment('PayPal')}
             cursor='pointer'
@@ -180,7 +207,9 @@ const Ordertype = () => {
         <Button onClick={() => router.push('/checkout')} width='20%'>
           Back
         </Button>
-        <Button onClick={handleSubmit} width='20%'>Submit</Button>
+        <Button isLoading={loading} onClick={handleSubmit} width='20%'>
+          Submit
+        </Button>
       </Stack>
     </Layout>
   );

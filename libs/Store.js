@@ -11,10 +11,10 @@ const initialState = {
   },
   userInfo: {
     address: Cookies.get('address')
-    ? JSON.parse(Cookies.get('address'))
-    : {}
-  }
-}
+     ? JSON.parse(Cookies.get('address'))
+     : {},
+  },
+};
 
 function reducer(state, action) {
   switch (action.type) {
@@ -32,19 +32,18 @@ function reducer(state, action) {
       return { ...state, cart: { ...state.cart, cartItems } };
     }
     case 'CART_DELETE_ITEM': {
-      const id = action.payload
-      const cartItems = state.cart.cartItems.filter(item => {
-        return item._id !== id
-      })
-      Cookies.set('cartItems', JSON.stringify(cartItems))
-      return { ...state, cart: {...state.cart, cartItems}}
+      const id = action.payload;
+      const cartItems = state.cart.cartItems.filter((item) => {
+        return item._id !== id;
+      });
+      Cookies.set('cartItems', JSON.stringify(cartItems));
+      return { ...state, cart: { ...state.cart, cartItems } };
     }
-    case 'SAVE_SHIPPING_ADDRESS':{
-      Cookies.set('address', JSON.stringify(action.payload));
-      return{
+    case 'SAVE_SHIPPING_ADDRESS': {
+      return {
         ...state,
-        userInfo: {...state.userInfo, address: action.payload}
-      }
+        userInfo: { ...state.userInfo, address: action.payload },
+      };
     }
     default:
       return state;

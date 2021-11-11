@@ -168,8 +168,10 @@ const Products = (props) => {
 
 export async function getServerSideProps() {
   await db.Connect();
-  const products = await Product.find({}, null, { limit: 10 }).lean();
-  const leng = await Product.count();
+  const products = await Product.find({}, null, { limit: 12 }).lean();
+  const leng = await Product.countDocuments();
+
+  console.log(products)
 
   return {
     props: {
