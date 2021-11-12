@@ -27,7 +27,7 @@ const orderSchema = new mongoose.Schema(
     isDelivered: { type: Boolean, required: true, default: false },
     deliveryMethod: { type: String },
     percelAddress: { type: String },
-    paidAt: { type: Date },
+    // paidAt: { type: Date },
     deliveredAt: { type: Date },
   },
   {

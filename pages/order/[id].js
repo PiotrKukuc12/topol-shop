@@ -11,22 +11,102 @@ import {
   Td,
   Tbody,
 } from '@chakra-ui/react';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import Layout from '../../components/Layout/layout';
 import { Store } from '../../libs/Store';
 import Image from 'next/image';
 import db from '../../libs/db';
 import Order from '../../models/Order';
+import axios from 'axios';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { useRouter } from 'next/dist/client/router';
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'FETCH_REQUEST':
+      return { ...state, loading: true, error: '' };
+    case 'FETCH_SUCCESS':
+      return { ...state, loading: false, order: action.payload, error: '' };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload };
+    case 'PAY_REQUEST':
+      return { ...state, loadingPay: true };
+    case 'PAY_SUCCESS':
+      return { ...state, loadingPay: false, successPay: true };
+    case 'PAY_FAIL':
+      return { ...state, loadingPay: false, errorPay: action.payload };
+    case 'PAY_RESET':
+      return { ...state, loadingPay: false, succesPay: false, errorPay: '' };
+  }
+}
 
 const Orderid = (props) => {
-  const { order } = props
-  const { state, dispatch } = useContext(Store);
+  const { order } = props;
+  const { state } = useContext(Store);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const router = useRouter();
+  const [succesPay, setSuccessPay] = useState(false)
+  const [loadingPay, setLoadingPay] = useState(false)
+  const [paid, setPaid] = useState(null)
 
-  const {
-    cart: { cartItems },
-  } = state;
+ 
+
+
+
+  useEffect(() => {
+    if (order.isPaid === true){
+      setPaid('Paid')
+    } else {
+      setPaid('Not Paid')
+    }
+    const loadPaypalScript = async () => {
+      paypalDispatch({
+        type: 'resetOptions',
+        value: {
+          'client-id': process.env.PAYPAL_CLIENT_ID,
+          currency: 'USD',
+        },
+      });
+      paypalDispatch({ type: 'setLoadingStatus', value: 'pending' })
+    };
+
+    loadPaypalScript()
+  }, [order,]);
+
+  function createOrder(data, actions) {
+    return actions.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: order.totalPrice },
+          },
+        ],
+      })
+  }
+
+  function onApprove(data, actions) {
+    return actions.order.capture().then(async function(details) {
+      try { 
+        setLoadingPay(true)
+        const { data } = await axios.put(
+          `http://localhost:3000/api/order/${order._id}/pay`,
+          details,
+        )
+        setPaid('Paid')
+        setLoadingPay(false)
+      } catch(error) {
+        setLoadingPay(false)
+        console.log(error)
+      }
+    })
+  }
+
+  function onError(error) {
+    console.log(error)
+  }
+
   return (
-    <Layout title="Order summary">
+    <Layout title='Order summary'>
       <Heading mt={2} ml='8%' fontSize='3xl'>
         Order {order._id}
       </Heading>
@@ -51,8 +131,12 @@ const Orderid = (props) => {
                 backgroundColor='whiteAlpha.200'
               >
                 <Text>
-                  {order.shippingAddress.fullName} <br /> {order.shippingAddress.address} <br /> {order.shippingAddress.postalCode} {order.shippingAddress.city} 
-                  <br /> {order.shippingAddress.country} <br /> {order.percelAddress ? `Percel: ${order.percelAddress}` : ""}
+                  {order.shippingAddress.fullName} <br />{' '}
+                  {order.shippingAddress.address} <br />{' '}
+                  {order.shippingAddress.postalCode}{' '}
+                  {order.shippingAddress.city}
+                  <br /> {order.shippingAddress.country} <br />{' '}
+                  {order.percelAddress ? `Percel: ${order.percelAddress}` : ''}
                 </Text>
               </Box>
               <Box
@@ -65,7 +149,9 @@ const Orderid = (props) => {
                 <Heading fontSize='lg'>Delivery</Heading>
                 <Text my={2}>{order.deliveryMethod}</Text>
                 <Heading fontSize='lg'>Status</Heading>
-                <Text mt={2}>{!order.isDelivered ? "Pending" : "Delivered"}</Text>
+                <Text mt={2}>
+                  {!order.isDelivered ? 'Pending' : 'Delivered'}
+                </Text>
               </Box>
             </Stack>
             <Heading ml={5} my={5} fontSize='xl'>
@@ -77,7 +163,7 @@ const Orderid = (props) => {
               borderRadius='10px'
               backgroundColor='whiteAlpha.200'
               h='280px'
-              overflowY={cartItems.length >= 9 ? 'scroll' : 'none'}
+              overflowY={order.orderItems.length >= 9 ? 'scroll' : 'none'}
             >
               <Table size='sm'>
                 <Thead>
@@ -123,7 +209,7 @@ const Orderid = (props) => {
                 </Stack>
                 <Stack direction='row' justifyContent='space-between'>
                   <Text>Status:</Text>
-                  <Text>{!order.isPaid ? "Not paid" : "Paid"}</Text>
+                  <Text>{paid}</Text>
                 </Stack>
               </Box>
             </Stack>
@@ -157,6 +243,13 @@ const Orderid = (props) => {
             <Heading ml={5} my={5} fontSize='xl'>
               Payment
             </Heading>
+            <Box p={5}>
+              <PayPalButtons
+              createOrder={createOrder}
+              onApprove={onApprove}
+              onError={onError}
+              ></PayPalButtons>
+            </Box>
           </Box>
         </Stack>
       </Stack>
@@ -172,11 +265,10 @@ export async function getServerSideProps(context) {
     const order = await Order.findOne({ _id: id }).lean();
     return {
       props: {
-        order: db.convertDocToObj(order)
+        order: db.convertDocToObj(order),
       },
     };
   } catch (error) {
-    console.log(error)
     return {
       props: {
         order: null,

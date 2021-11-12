@@ -51,6 +51,10 @@ const Selectparcel = () => {
         percelAddress: percelName,
       });
       setLoading(false);
+      Cookies.remove('cartItems')
+      Cookies.remove('address')
+      Cookies.remove('delivery')
+      Cookies.remove('percelAddress')
       router.push(`/order/${data._id}`);
     } catch (error) {
       console.log(error);

@@ -42,6 +42,10 @@ const Ordertype = () => {
       });
       // clear cookies
       setLoading(false);
+      Cookies.remove('cartItems')
+      Cookies.remove('address')
+      Cookies.remove('delivery')
+      Cookies.remove('percelAddress')
       router.push(`/order/${data._id}`);
     }
   };

@@ -45,7 +45,7 @@ const Products = (props) => {
   return (
     <Layout title='Products'>
       <ToastContainer />
-      <Stack direction={{ base: 'column', md: 'row' }}>
+      <Stack data-testid='Index-1' direction={{ base: 'column', md: 'row' }}>
         <Stack
           w='150px'
           height={{ base: '', lg: '500px' }}
@@ -171,7 +171,6 @@ export async function getServerSideProps() {
   const products = await Product.find({}, null, { limit: 12 }).lean();
   const leng = await Product.countDocuments();
 
-  console.log(products)
 
   return {
     props: {

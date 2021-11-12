@@ -4,7 +4,6 @@ const connection = {};
 
 async function Connect() {
   if (connection.isConnected) {
-    console.log('connected');
     return;
   }
 
@@ -14,12 +13,10 @@ async function Connect() {
   });
 
   connection.isConnected = db.connections[0].readyState;
-  console.log('connect')
 }
 
 async function Disconnect() {
   if (connection.isConnected) {
-    console.log('disconnected');
     await mongoose.disconnect
     connection.isConnected = false
   } else {

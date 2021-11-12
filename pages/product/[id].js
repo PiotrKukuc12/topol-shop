@@ -38,7 +38,7 @@ const ProductDetails = (props) => {
 
   return (
     <Layout title='Details'>
-      <ToastContainer position='bottom-right' />
+      <ToastContainer position='bottom-left' />
       <Box width='98vw' mt={10}>
         <Stack
           direction={{ base: 'column', lg: 'row' }}

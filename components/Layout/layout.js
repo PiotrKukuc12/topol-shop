@@ -28,7 +28,7 @@ const Layout = ({ title, children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef();
 
-  const { state, dispatch } = useContext(Store);
+  const { state } = useContext(Store);
 
   const {
     cart: { cartItems },

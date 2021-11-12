@@ -12,7 +12,6 @@ handler.post(async (req, res)=> {
         
         for (let i = 0; i < req.body.orderItems.length; i++) {
             const product = await Product.findById(req.body.orderItems[i]._id)
-            console.log(product.price)
             totalCount += product.price * req.body.orderItems[i].quantity
         }
 

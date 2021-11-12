@@ -7,7 +7,7 @@ import { Spinner } from '@chakra-ui/spinner';
 import Layout from '../components/Layout/layout';
 import Fonts from '../components/fonts';
 import { Box } from '@chakra-ui/layout';
-
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 
 const Website = ({ Component, pageProps }) => {
   const [loading, setLoading] = useState(false);
@@ -32,21 +32,29 @@ const Website = ({ Component, pageProps }) => {
     <ChakraProvider theme={theme}>
       <Fonts />
       <StoreProvider>
-        {loading ? (
-          <Layout title='Loading'>
-            <Box w='100vw' mt='200px' display='flex' align='center' justifyContent='center'>
-              <Spinner
-                thickness='4px'
-                speed='0.65s'
-                emptyColor='gray.200'
-                color='blue.500'
-                size='xl'
-              />
-            </Box>
-          </Layout>
-        ) : (
-          <Component {...pageProps} />
-        )}
+        <PayPalScriptProvider>
+          {loading ? (
+            <Layout title='Loading'>
+              <Box
+                w='100vw'
+                mt='200px'
+                display='flex'
+                align='center'
+                justifyContent='center'
+              >
+                <Spinner
+                  thickness='4px'
+                  speed='0.65s'
+                  emptyColor='gray.200'
+                  color='blue.500'
+                  size='xl'
+                />
+              </Box>
+            </Layout>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </PayPalScriptProvider>
       </StoreProvider>
     </ChakraProvider>
   );
