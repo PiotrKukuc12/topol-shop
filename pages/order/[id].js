@@ -20,8 +20,7 @@ import db from '../../libs/db';
 import Order from '../../models/Order';
 import axios from 'axios';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
-import { useRouter } from 'next/dist/client/router';
-
+import { useColorModeValue } from '@chakra-ui/color-mode';
 
 
 const Orderid = (props) => {
@@ -101,7 +100,7 @@ const Orderid = (props) => {
         direction='row'
         justifyContent='space-around'
       >
-        <Stack w='40%' h='640px' border='1px solid white'>
+        <Stack w='40%' h='640px' border={useColorModeValue('1px solid black', '1px solid white')}>
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Delivery Address
@@ -112,7 +111,7 @@ const Orderid = (props) => {
                 w='50%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor='whiteAlpha.200'
+                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
               >
                 <Text>
                   {order.shippingAddress.fullName} <br />{' '}
@@ -127,7 +126,7 @@ const Orderid = (props) => {
                 w='25%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor='whiteAlpha.200'
+                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
                 align='center'
               >
                 <Heading fontSize='lg'>Delivery</Heading>
@@ -145,7 +144,7 @@ const Orderid = (props) => {
               m={5}
               p={3}
               borderRadius='10px'
-              backgroundColor='whiteAlpha.200'
+              backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
               h='280px'
               overflowY={order.orderItems.length >= 9 ? 'scroll' : 'none'}
             >
@@ -174,7 +173,7 @@ const Orderid = (props) => {
             </Box>
           </Box>
         </Stack>
-        <Stack w='25%' h='640px' border='1px solid white'>
+        <Stack w='25%' h='640px' border={useColorModeValue('1px solid black', '1px solid white')}>
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Payment
@@ -185,7 +184,7 @@ const Orderid = (props) => {
                 w='70%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor='whiteAlpha.200'
+                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
               >
                 <Stack direction='row' justifyContent='space-between'>
                   <Text>Method:</Text>
@@ -206,7 +205,7 @@ const Orderid = (props) => {
                 w='70%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor='whiteAlpha.200'
+                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
               >
                 <Box mb={5}>
                   <Stack direction='row' justifyContent='space-between'>

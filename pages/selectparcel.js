@@ -80,16 +80,16 @@ const Selectparcel = () => {
           <Box
             borderRadius='10px'
             w='95%'
-            h='700px'
+            h='550px'
             backgroundColor='whiteAlpha.900'
             mx={5}
             p={5}
           >
             <div id='easypack-map'></div>
           </Box>
-          <Box mt={10}>
+          <Box mt={20}>
             <Box>
-              <Text>Current Percel:</Text>
+              {/* <Text>Current Percel:</Text> */}
 
               <div id='percel_name'></div>
             </Box>
