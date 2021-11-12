@@ -36,11 +36,7 @@ const Orderid = (props) => {
       setPaid('Not Paid');
     }
     const loadPaypalScript = async () => {
-      const { data: clientID } = await axios.get(
-        !process.env.PRODUCTION_URL
-          ? 'http://localhost:3000/api/order/key'
-          : `${process.env.PRODUCTION_URL}/api/order/key`
-      );
+      const { data: clientID } = await axios.get('/api/order/key');
       paypalDispatch({
         type: 'resetOptions',
         value: {
@@ -68,12 +64,7 @@ const Orderid = (props) => {
     return actions.order.capture().then(async function (details) {
       try {
         setLoadingPay(true);
-        await axios.put(
-          !process.env.PRODUCTION_URL
-            ? `http://localhost:3000/api/order/${order._id}/pay`
-            : `${process.env.PRODUCTION_URL}/api/order/${order._id}/pay`,
-          details
-        );
+        await axios.put(`/api/order/${order._id}/pay`, details);
         setPaid('Paid');
         toast({
           title: 'Successfully payment',
