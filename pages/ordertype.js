@@ -37,6 +37,7 @@ const Ordertype = () => {
         orderItems: cartItems,
         shippingAddress: address,
         paymentMethod: payment ? payment : 'Cash',
+        deliveryMethod: delivery
         // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
       });
       // clear cookies

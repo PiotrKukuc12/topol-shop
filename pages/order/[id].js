@@ -14,17 +14,22 @@ import {
 import { useContext, useState } from 'react';
 import Layout from '../../components/Layout/layout';
 import { Store } from '../../libs/Store';
-import Image from 'next/image'
+import Image from 'next/image';
+import db from '../../libs/db';
+import Order from '../../models/Order';
 
-const Orderid = () => {
+const Orderid = (props) => {
+  const { order } = props
   const { state, dispatch } = useContext(Store);
 
   const {
     cart: { cartItems },
   } = state;
   return (
-    <Layout>
-    <Heading mt={2} ml='8%'  fontSize='3xl'>Order 123435434353</Heading>
+    <Layout title="Order summary">
+      <Heading mt={2} ml='8%' fontSize='3xl'>
+        Order {order._id}
+      </Heading>
       <Stack
         w='100vw'
         mt={10}
@@ -46,8 +51,8 @@ const Orderid = () => {
                 backgroundColor='whiteAlpha.200'
               >
                 <Text>
-                  Piotr Kukuc <br /> Ignacego Daszynskiego 25 <br /> Wroclaw{' '}
-                  <br /> Polska{' '}
+                  {order.shippingAddress.fullName} <br /> {order.shippingAddress.address} <br /> {order.shippingAddress.postalCode} {order.shippingAddress.city} 
+                  <br /> {order.shippingAddress.country} <br /> {order.percelAddress ? `Percel: ${order.percelAddress}` : ""}
                 </Text>
               </Box>
               <Box
@@ -57,8 +62,10 @@ const Orderid = () => {
                 backgroundColor='whiteAlpha.200'
                 align='center'
               >
+                <Heading fontSize='lg'>Delivery</Heading>
+                <Text my={2}>{order.deliveryMethod}</Text>
                 <Heading fontSize='lg'>Status</Heading>
-                <Text mt={5}>Pending</Text>
+                <Text mt={2}>{!order.isDelivered ? "Pending" : "Delivered"}</Text>
               </Box>
             </Stack>
             <Heading ml={5} my={5} fontSize='xl'>
@@ -75,16 +82,18 @@ const Orderid = () => {
               <Table size='sm'>
                 <Thead>
                   <Tr>
-                  <Th>Image</Th>
+                    <Th>Image</Th>
                     <Th>Name</Th>
                     <Th isNumeric>Quantity</Th>
                     <Th isNumeric>Price</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {cartItems.map((item) => (
+                  {order.orderItems.map((item) => (
                     <Tr key={item._id}>
-                    <Td><Image src={item.image} width={50} height={50} /></Td>
+                      <Td>
+                        <Image src={item.image} width={50} height={50} />
+                      </Td>
                       <Td>{item.name}</Td>
                       <Td isNumeric>{item.quantity}x</Td>
                       <Td isNumeric>${item.price}</Td>
@@ -95,7 +104,7 @@ const Orderid = () => {
             </Box>
           </Box>
         </Stack>
-        <Stack w='25%'  h='640px' border='1px solid white'>
+        <Stack w='25%' h='640px' border='1px solid white'>
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Payment
@@ -108,13 +117,13 @@ const Orderid = () => {
                 borderRadius='10px'
                 backgroundColor='whiteAlpha.200'
               >
-                 <Stack direction='row' justifyContent='space-between'>
+                <Stack direction='row' justifyContent='space-between'>
                   <Text>Method:</Text>
-                  <Text> PayPal </Text>
+                  <Text> {order.paymentMethod} </Text>
                 </Stack>
                 <Stack direction='row' justifyContent='space-between'>
                   <Text>Status:</Text>
-                  <Text>Not Paid</Text>
+                  <Text>{!order.isPaid ? "Not paid" : "Paid"}</Text>
                 </Stack>
               </Box>
             </Stack>
@@ -129,19 +138,19 @@ const Orderid = () => {
                 borderRadius='10px'
                 backgroundColor='whiteAlpha.200'
               >
-              <Box mb={5}>
+                <Box mb={5}>
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Text>Items:</Text>
+                    <Text> {order.itemsPrice} $ </Text>
+                  </Stack>
+                  <Stack direction='row' justifyContent='space-between'>
+                    <Text>Shipping:</Text>
+                    <Text> {order.shippingPrice} $ </Text>
+                  </Stack>
+                </Box>
                 <Stack direction='row' justifyContent='space-between'>
-                  <Text>Items:</Text>
-                  <Text> 70 $ </Text>
-                </Stack>
-                <Stack direction='row' justifyContent='space-between'>
-                  <Text>Shipping:</Text>
-                  <Text> 15 $ </Text>
-                </Stack>
-              </Box>
-              <Stack direction='row' justifyContent='space-between'>
                   <Text fontWeight='bold'>Total:</Text>
-                  <Text fontWeight='bold'> 55 $ </Text>
+                  <Text fontWeight='bold'> {order.totalPrice} $ </Text>
                 </Stack>
               </Box>
             </Stack>
@@ -154,5 +163,26 @@ const Orderid = () => {
     </Layout>
   );
 };
+
+export async function getServerSideProps(context) {
+  try {
+    const { params } = context;
+    const { id } = params;
+    await db.Connect();
+    const order = await Order.findOne({ _id: id }).lean();
+    return {
+      props: {
+        order: db.convertDocToObj(order)
+      },
+    };
+  } catch (error) {
+    console.log(error)
+    return {
+      props: {
+        order: null,
+      },
+    };
+  }
+}
 
 export default Orderid;

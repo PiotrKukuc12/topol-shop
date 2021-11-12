@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema(
       {
         _id: { type: String, required: true },
         name: { type: String, required: true },
+        price: { type: Number, required: true },
         quantity: { type: Number, required: true },
         image: { type: String, required: true },
       },
@@ -24,6 +25,8 @@ const orderSchema = new mongoose.Schema(
     totalPrice: { type: Number, required: true },
     isPaid: { type: Boolean, required: true, default: false },
     isDelivered: { type: Boolean, required: true, default: false },
+    deliveryMethod: { type: String },
+    percelAddress: { type: String },
     paidAt: { type: Date },
     deliveredAt: { type: Date },
   },

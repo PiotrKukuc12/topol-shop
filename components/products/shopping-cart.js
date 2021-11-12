@@ -48,7 +48,7 @@ const ShoppingCart = ({ item }) => {
           </Stack>
           <Text py={0}>${item.price}</Text>
           <Select
-            placeholder={item.quantity}
+            // placeholder={item.quantity}
             onChange={(e) => updateCart(item, e.target.value)}
             width='70px'
           >
