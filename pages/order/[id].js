@@ -10,6 +10,7 @@ import {
   Th,
   Td,
   Tbody,
+  useToast,
 } from '@chakra-ui/react';
 import { useContext, useEffect, useReducer, useState } from 'react';
 import Layout from '../../components/Layout/layout';
@@ -21,37 +22,14 @@ import axios from 'axios';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useRouter } from 'next/dist/client/router';
 
-function reducer(state, action) {
-  switch (action.type) {
-    case 'FETCH_REQUEST':
-      return { ...state, loading: true, error: '' };
-    case 'FETCH_SUCCESS':
-      return { ...state, loading: false, order: action.payload, error: '' };
-    case 'FETCH_FAIL':
-      return { ...state, loading: false, error: action.payload };
-    case 'PAY_REQUEST':
-      return { ...state, loadingPay: true };
-    case 'PAY_SUCCESS':
-      return { ...state, loadingPay: false, successPay: true };
-    case 'PAY_FAIL':
-      return { ...state, loadingPay: false, errorPay: action.payload };
-    case 'PAY_RESET':
-      return { ...state, loadingPay: false, succesPay: false, errorPay: '' };
-  }
-}
+
 
 const Orderid = (props) => {
   const { order } = props;
-  const { state } = useContext(Store);
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-  const router = useRouter();
-  const [succesPay, setSuccessPay] = useState(false)
   const [loadingPay, setLoadingPay] = useState(false)
   const [paid, setPaid] = useState(null)
-
- 
-
-
+  const toast = useToast()
 
   useEffect(() => {
     if (order.isPaid === true){
@@ -88,11 +66,17 @@ const Orderid = (props) => {
     return actions.order.capture().then(async function(details) {
       try { 
         setLoadingPay(true)
-        const { data } = await axios.put(
+        await axios.put(
           `http://localhost:3000/api/order/${order._id}/pay`,
           details,
         )
         setPaid('Paid')
+        toast({
+          title: 'Successfully payment',
+          status: 'success',
+          duration: '5000',
+          isClosable: true,
+        })
         setLoadingPay(false)
       } catch(error) {
         setLoadingPay(false)

@@ -116,7 +116,7 @@ const Layout = ({ title, children }) => {
                 ) / 100}
                 {/* {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)} */}
               </Text>
-              <NextLink href='/checkout'>
+              <NextLink href={cartItems.length >= 1 ? '/checkout' : '/products'}>
                 <Button>Checkout</Button>
               </NextLink>
             </DrawerFooter>

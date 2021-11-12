@@ -1,18 +1,17 @@
-import { Container, Stack, Box, Text, Heading, Button } from '@chakra-ui/react';
+import { Container, Stack, Box, Text, Heading, Button, useToast } from '@chakra-ui/react';
 import Layout from '../../components/Layout/layout';
 import db from '../../libs/db';
 import Product from '../../models/Products';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 import { Store } from '../../libs/Store';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 
 const text1 = ' lorem ipsum material';
 const text2 = ' lorem ipsum wymiary';
 
 const ProductDetails = (props) => {
+  const toast = useToast()
   const { product } = props;
   const [textDetails, setTextDetails] = useState(true);
 
@@ -33,12 +32,17 @@ const ProductDetails = (props) => {
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
-    toast.success('Item added to bag.');
+    toast({
+      title: 'Item added to bag',
+      status: 'success',
+      duration: '3000',
+      isClosable: true,
+    })
   };
 
   return (
     <Layout title='Details'>
-      <ToastContainer position='bottom-left' />
+      {/* <ToastContainer position='bottom-left' /> */}
       <Box width='98vw' mt={10}>
         <Stack
           direction={{ base: 'column', lg: 'row' }}

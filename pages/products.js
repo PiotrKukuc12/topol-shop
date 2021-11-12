@@ -16,8 +16,6 @@ import Product from '../models/Products';
 import { useContext, useState } from 'react';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import dynamic from 'next/dynamic';
 
 const Categories = ['Hoodies', 'T-shirt', 'Pants', 'Shoes', 'Accessories'];
@@ -37,14 +35,13 @@ const Products = (props) => {
       setItems((post) => [...post, ...newPosts]);
       controller = null;
     } catch (error) {
-      toast.error(error.message);
+      console.log(error)
     }
     return () => controller?.abort();
   };
 
   return (
     <Layout title='Products'>
-      <ToastContainer />
       <Stack data-testid='Index-1' direction={{ base: 'column', md: 'row' }}>
         <Stack
           w='150px'
@@ -93,13 +90,12 @@ const Products = (props) => {
               />
             </Box>
           }
-          endMessage={<h4 style={{ width: '100%' }}>No more</h4>}
           style={{
             marginLeft: '20px',
             display: 'flex',
             flexWrap: 'wrap',
             width: '85vw',
-            justifyContent: 'center',
+            justifyContent: 'space-between',
           }}
         >
           {items.map((item) => (
