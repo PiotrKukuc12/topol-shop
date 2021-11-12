@@ -22,70 +22,75 @@ import axios from 'axios';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 
-
 const Orderid = (props) => {
   const { order } = props;
   const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-  const [loadingPay, setLoadingPay] = useState(false)
-  const [paid, setPaid] = useState(null)
-  const toast = useToast()
+  const [loadingPay, setLoadingPay] = useState(false);
+  const [paid, setPaid] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
-    if (order.isPaid === true){
-      setPaid('Paid')
+    if (order.isPaid === true) {
+      setPaid('Paid');
     } else {
-      setPaid('Not Paid')
+      setPaid('Not Paid');
     }
     const loadPaypalScript = async () => {
+      const { data: clientID } = await axios.get(
+        !process.env.PRODUCTION_URL
+          ? 'http://localhost:3000/api/order/key'
+          : `${process.env.PRODUCTION_URL}/api/order/key`
+      );
       paypalDispatch({
         type: 'resetOptions',
         value: {
-          'client-id': process.env.PAYPAL_CLIENT_ID,
+          'client-id': clientID,
           currency: 'USD',
         },
       });
-      paypalDispatch({ type: 'setLoadingStatus', value: 'pending' })
+      paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
     };
 
-    loadPaypalScript()
-  }, [order,]);
+    loadPaypalScript();
+  }, [order]);
 
   function createOrder(data, actions) {
-    return actions.order
-      .create({
-        purchase_units: [
-          {
-            amount: { value: order.totalPrice },
-          },
-        ],
-      })
+    return actions.order.create({
+      purchase_units: [
+        {
+          amount: { value: order.totalPrice },
+        },
+      ],
+    });
   }
 
   function onApprove(data, actions) {
-    return actions.order.capture().then(async function(details) {
-      try { 
-        setLoadingPay(true)
+    return actions.order.capture().then(async function (details) {
+      try {
+        setLoadingPay(true);
         await axios.put(
-          `http://localhost:3000/api/order/${order._id}/pay`,
-          details,
-        )
-        setPaid('Paid')
+          !process.env.PRODUCTION_URL
+            ? `http://localhost:3000/api/order/${order._id}/pay`
+            : `${process.env.PRODUCTION_URL}/api/order/${order._id}/pay`,
+          details
+        );
+        setPaid('Paid');
         toast({
           title: 'Successfully payment',
           status: 'success',
           duration: '5000',
           isClosable: true,
-        })
-        setLoadingPay(false)
-      } catch(error) {
-        setLoadingPay(false)
-        console.log(error)
+        });
+        setLoadingPay(false);
+      } catch (error) {
+        setLoadingPay(false);
+        console.log(error);
       }
-    })
+    });
   }
 
   function onError(error) {
-    console.log(error)
+    console.log(error);
   }
 
   return (
@@ -100,7 +105,11 @@ const Orderid = (props) => {
         direction='row'
         justifyContent='space-around'
       >
-        <Stack w='40%' h='640px' border={useColorModeValue('1px solid black', '1px solid white')}>
+        <Stack
+          w='40%'
+          h='640px'
+          border={useColorModeValue('1px solid black', '1px solid white')}
+        >
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Delivery Address
@@ -111,7 +120,10 @@ const Orderid = (props) => {
                 w='50%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
+                backgroundColor={useColorModeValue(
+                  'blackAlpha.200',
+                  'whiteAlpha.200'
+                )}
               >
                 <Text>
                   {order.shippingAddress.fullName} <br />{' '}
@@ -126,7 +138,10 @@ const Orderid = (props) => {
                 w='25%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
+                backgroundColor={useColorModeValue(
+                  'blackAlpha.200',
+                  'whiteAlpha.200'
+                )}
                 align='center'
               >
                 <Heading fontSize='lg'>Delivery</Heading>
@@ -144,7 +159,10 @@ const Orderid = (props) => {
               m={5}
               p={3}
               borderRadius='10px'
-              backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
+              backgroundColor={useColorModeValue(
+                'blackAlpha.200',
+                'whiteAlpha.200'
+              )}
               h='280px'
               overflowY={order.orderItems.length >= 9 ? 'scroll' : 'none'}
             >
@@ -173,7 +191,11 @@ const Orderid = (props) => {
             </Box>
           </Box>
         </Stack>
-        <Stack w='25%' h='640px' border={useColorModeValue('1px solid black', '1px solid white')}>
+        <Stack
+          w='25%'
+          h='640px'
+          border={useColorModeValue('1px solid black', '1px solid white')}
+        >
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Payment
@@ -184,7 +206,10 @@ const Orderid = (props) => {
                 w='70%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
+                backgroundColor={useColorModeValue(
+                  'blackAlpha.200',
+                  'whiteAlpha.200'
+                )}
               >
                 <Stack direction='row' justifyContent='space-between'>
                   <Text>Method:</Text>
@@ -205,7 +230,10 @@ const Orderid = (props) => {
                 w='70%'
                 p={5}
                 borderRadius='10px'
-                backgroundColor={useColorModeValue('blackAlpha.200', 'whiteAlpha.200')}
+                backgroundColor={useColorModeValue(
+                  'blackAlpha.200',
+                  'whiteAlpha.200'
+                )}
               >
                 <Box mb={5}>
                   <Stack direction='row' justifyContent='space-between'>
@@ -228,9 +256,9 @@ const Orderid = (props) => {
             </Heading>
             <Box p={5}>
               <PayPalButtons
-              createOrder={createOrder}
-              onApprove={onApprove}
-              onError={onError}
+                createOrder={createOrder}
+                onApprove={onApprove}
+                onError={onError}
               ></PayPalButtons>
             </Box>
           </Box>
