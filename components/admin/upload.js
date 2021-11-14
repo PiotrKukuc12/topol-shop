@@ -1,8 +1,9 @@
 import { Button } from '@chakra-ui/button';
 import { Box } from '@chakra-ui/layout';
-import { CircularProgress } from '@chakra-ui/progress';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import Image from 'next/image';
+
 
 import { useState } from 'react';
 
@@ -11,6 +12,7 @@ const Upload = () => {
   const [loading, setLoading] = useState(false);
   const uploadHandler = async (e) => {
     const file = e.target.files[0];
+    const token = Cookies.get('token')
     const bodyFormData = new FormData();
     bodyFormData.append('file', file);
     try {
@@ -18,7 +20,7 @@ const Upload = () => {
       const { data } = await axios.post('api/admin/upload', bodyFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          // add here authorization
+          'Authorization': `Bearer ${token}`
         },
       });
       setImage(data.secure_url);
