@@ -1,7 +1,7 @@
 import { Admin, Resource, EditGuesser } from 'react-admin';
 import simpleRestProvider from 'ra-data-json-server';
 import { ProductsList, ProductEdit, CreateProduct } from './products/products';
-import { OrderEdit, OrderList } from './orders/orders';
+import { CreateOrder, OrderEdit, OrderList } from './orders/orders';
 import authProvider from './authProvider';
 
 const dataProvider = simpleRestProvider('http://localhost:3000/api/admin');

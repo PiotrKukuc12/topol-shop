@@ -20,6 +20,7 @@ import {
   DateInput,
 } from 'react-admin';
 
+
 export const OrderList = (props) => (
   <List {...props}>
     <Datagrid rowClick='edit'>
@@ -42,9 +43,31 @@ export const OrderList = (props) => (
 );
 
 export const OrderEdit = (props) => (
+  <>
+    <Edit {...props}>
+      <SimpleForm>
+        <TextInput disabled source='shippingAddress.fullName' />
+        <TextInput disabled source='paymentResult.id' />
+        <BooleanInput disabled source='isPaid' />
+        <BooleanInput source='isDelivered' />
+        <ArrayInput source='orderItems'>
+          <SimpleFormIterator>
+            <TextInput source='name' />
+            <TextInput source='image' />
+            <NumberInput source='price' />
+            <NumberInput source='quantity' />
+          </SimpleFormIterator>
+        </ArrayInput>
+        <TextInput source='paymentMethod' />
+        <TextInput source='deliveryMethod' />
+        <TextInput source='percelAddress' />
+        <NumberInput source='itemsPrice' />
+        <NumberInput source='shippingPrice' />
+        <NumberInput source='totalPrice' />
+        <DateInput source='createdAt' />
 
-    <div>
-Hello edit order
-    </div>
-  
+      </SimpleForm>
+    </Edit>
+  </>
 );
+

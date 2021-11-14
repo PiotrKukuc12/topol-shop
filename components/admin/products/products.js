@@ -11,9 +11,9 @@ import {
   TextInput,
   DateInput,
   Create,
-  ReferenceInput,
   SimpleList
 } from 'react-admin';
+import Upload from '../upload'
 
 const width = window.innerWidth
 console.log(width)
@@ -69,6 +69,7 @@ export const CreateProduct = props => (
           <NumberInput source="price" />
           <TextInput source="image" />
           <TextInput source="description" />
+          <Upload />
       </SimpleForm>
   </Create>
 );
