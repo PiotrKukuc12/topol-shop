@@ -1,4 +1,12 @@
-import { Container, Stack, Box, Text, Heading, Button, useToast } from '@chakra-ui/react';
+import {
+  Container,
+  Stack,
+  Box,
+  Text,
+  Heading,
+  Button,
+  useToast,
+} from '@chakra-ui/react';
 import Layout from '../../components/Layout/layout';
 import db from '../../libs/db';
 import Product from '../../models/Products';
@@ -11,7 +19,7 @@ const text1 = ' lorem ipsum material';
 const text2 = ' lorem ipsum wymiary';
 
 const ProductDetails = (props) => {
-  const toast = useToast()
+  const toast = useToast();
   const { product } = props;
   const [textDetails, setTextDetails] = useState(true);
 
@@ -31,13 +39,19 @@ const ProductDetails = (props) => {
       toast.error('Product is out of stock.');
       return;
     }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity } });
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      payload: {
+        ...product,
+        quantity,
+      },
+    });
     toast({
       title: 'Item added to bag',
       status: 'success',
       duration: '3000',
       isClosable: true,
-    })
+    });
   };
 
   return (
@@ -51,14 +65,19 @@ const ProductDetails = (props) => {
           <Box align='center'>
             <Image src={product.image} width={640} height={640} />
           </Box>
-          <Stack align={{base:'center',lg:'baseline'}} w={{ base: '90%', lg: '400px' }}>
+          <Stack
+            align={{ base: 'center', lg: 'baseline' }}
+            w={{ base: '90%', lg: '400px' }}
+          >
             <Heading fontSize='6xl'>{product.name}</Heading>
             <Heading fontSize='2xl'>$ {product.price}</Heading>
             <Text fontSize='lg'>Size: xl </Text>
-            <Text pt={10} px={{base: '10', lg:'0'}} color='gray.500'>
+            <Text pt={10} px={{ base: '10', lg: '0' }} color='gray.500'>
               {product.description}
             </Text>
-            <Button onClick={addToBagHandler} width='90%'>Add to bag</Button>
+            <Button onClick={addToBagHandler} width='90%'>
+              Add to bag
+            </Button>
 
             <Stack direction='column' pt={20}>
               <Box>

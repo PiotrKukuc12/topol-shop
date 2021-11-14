@@ -5,7 +5,7 @@ import {
   UnorderedList,
   ListItem,
   Box,
-  Spinner,
+  Input,
   Tooltip,
   Button,
 } from '@chakra-ui/react';
@@ -80,25 +80,41 @@ const Products = (props) => {
   const priceHandler = (e) => {
     filterSearch({ price: e.target.value });
   };
+  const searchHandler = (e) => {
+    if (e.key === 'Enter') {
+      filterSearch({ searchQuery: e.target.value })
+    }
+  };
 
   return (
     <Layout title='Products'>
       <Stack data-testid='Index-1' direction={{ base: 'column', lg: 'row' }}>
         <Stack
-          w={{base:'auto',lg:'150px'}}
+          w={{ base: 'auto', lg: '150px' }}
           height={{ base: '', lg: '500px' }}
           marginLeft={2}
           align='center'
-          
         >
-          <Stack spacing={{base:'20', lg:'0'}} direction={{base:'row', lg:'column'}}>
+          <Stack
+            spacing={{ base: '20', lg: '0' }}
+            direction={{ base: 'row', lg: 'column' }}
+          >
             <Box>
+              <Heading fontSize='xl' mt={5}>
+                Search
+              </Heading>
+              <Input placeholder='Find item'   onKeyDown={searchHandler} mt={2} />
               <Heading fontSize='xl' mt={5}>
                 Categories
               </Heading>
               <UnorderedList>
                 <ListItem>
-                  <Button onClick={categoryHandler} value='all' fontWeight='normal' variant='link'>
+                  <Button
+                    onClick={categoryHandler}
+                    value='all'
+                    fontWeight='normal'
+                    variant='link'
+                  >
                     All
                   </Button>
                 </ListItem>
@@ -315,6 +331,7 @@ export async function getServerSideProps({ query }) {
       : { _id: -1 };
 
   const products = await Product.find({
+    name: { $regex: searchQuery, $options: 'i' },
     ...categoryFilter,
     ...priceFilter,
   })

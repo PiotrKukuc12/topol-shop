@@ -18,10 +18,6 @@ const Ordertype = () => {
     userInfo: { address },
   } = state;
 
-
-
-
-
   const [delivery, setDelivery] = useState(null);
   const [payment, setPayment] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,16 +33,16 @@ const Ordertype = () => {
         orderItems: cartItems,
         shippingAddress: address,
         paymentMethod: payment ? payment : 'Cash',
-        deliveryMethod: delivery
+        deliveryMethod: delivery,
         // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
       });
       // clear cookies
       setLoading(false);
-      Cookies.remove('cartItems')
-      Cookies.remove('address')
-      Cookies.remove('delivery')
-      Cookies.remove('percelAddress')
-      router.push(`/order/${data._id}`);
+      Cookies.remove('cartItems');
+      Cookies.remove('address');
+      Cookies.remove('delivery');
+      Cookies.remove('percelAddress');
+      router.push(`/order/${data.id}`);
     }
   };
 

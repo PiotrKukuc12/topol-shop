@@ -91,13 +91,15 @@ const Orderid = (props) => {
       </Heading>
       <Stack
         w='100vw'
-        mt={10}
+        my={10}
         spacing={10}
-        direction='row'
+        direction={{base:'column-reverse', lg:'row'}}
+        align={{base:'center', lg:'initial'}}
         justifyContent='space-around'
+
       >
         <Stack
-          w='40%'
+          w={{base:'80%',lg:'40%'}}
           h='640px'
           border={useColorModeValue('1px solid black', '1px solid white')}
         >
@@ -168,7 +170,7 @@ const Orderid = (props) => {
                 </Thead>
                 <Tbody>
                   {order.orderItems.map((item) => (
-                    <Tr key={item._id}>
+                    <Tr key={item.id}>
                       <Td>
                         <Image src={item.image} width={50} height={50} />
                       </Td>
@@ -183,8 +185,9 @@ const Orderid = (props) => {
           </Box>
         </Stack>
         <Stack
-          w='25%'
-          h='640px'
+          w={{base:'80%',lg:'25%'}}
+          h='auto'
+          overflowY= 'hidden'
           border={useColorModeValue('1px solid black', '1px solid white')}
         >
           <Box>

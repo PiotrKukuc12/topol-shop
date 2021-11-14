@@ -35,5 +35,13 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
+orderSchema.set('toJSON', {
+  transform: function (doc, ret, options) {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  },
+});
+
 const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 export default Order;

@@ -9,8 +9,10 @@ const handler = nextConnect()
 handler.get(async (req, res) => {
     try{
         await db.Connect()
+        const total = await Product.countDocuments()
         const prod = await  Product.findById(req.query.id)
         await db.Disconnect()
+
         res.status(200).json(prod)
     } catch (error) {
         res.status(400).json({error: error.message})
