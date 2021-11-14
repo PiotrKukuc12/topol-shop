@@ -15,7 +15,7 @@ const httpClient = (url, options={}) => {
   return fetchUtils.fetchJson(url, options)
 }
 
-const dataProvider = simpleRestProvider('http://localhost:3000/api/admin', httpClient);
+const dataProvider = simpleRestProvider('/api/admin', httpClient);
 
 
 const ReactAdmin = () => {
