@@ -2,6 +2,8 @@ import nextConnect from 'next-connect';
 import { v2 as cloudinary } from 'cloudinary';
 import multer from 'multer';
 import streamifier from 'streamifier';
+import { isAuth } from '../../../libs/auth';
+
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -16,6 +18,7 @@ export const config = {
 };
 
 const handler = nextConnect();
+handler.use(isAuth)
 const upload = multer();
 handler.use(upload.single('file')).post(async (req, res) => {
   const streamUpload = (req) => {

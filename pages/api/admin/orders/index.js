@@ -1,8 +1,10 @@
 import db from '../../../../libs/db';
 import nextConnect from 'next-connect';
 import Order from '../../../../models/Order';
+import { isAuth } from '../../../../libs/auth';
 
 const handler = nextConnect();
+handler.use(isAuth)
 
 handler.get(async (req, res) => {
   try {

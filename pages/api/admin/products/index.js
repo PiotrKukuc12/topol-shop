@@ -1,12 +1,14 @@
 import db from '../../../../libs/db';
 import nextConnect from 'next-connect';
 import Product from '../../../../models/Products';
+import { isAuth } from '../../../../libs/auth';
 
 const handler = nextConnect();
+handler.use(isAuth);
 
 handler.get(async (req, res) => {
   try {
-    const searchQuery = req.query.q || "";
+    const searchQuery = req.query.q || '';
     const start = parseInt(req.query._start);
     const end = parseInt(req.query._end);
 
