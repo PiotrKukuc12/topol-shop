@@ -37,9 +37,9 @@ const Selectparcel = () => {
     const cartItems = JSON.parse(Cookies.get('cartItems'));
     const payment = JSON.parse(Cookies.get('payment'));
     const delivery = JSON.parse(Cookies.get('delivery'));
-    const percelName = percel
+    const percelName = percel;
 
-    console.log(percelName, delivery)
+    console.log(percelName, delivery);
 
     try {
       setLoading(true);
@@ -51,11 +51,11 @@ const Selectparcel = () => {
         percelAddress: percelName,
       });
       setLoading(false);
-      Cookies.remove('cartItems')
-      Cookies.remove('address')
-      Cookies.remove('delivery')
-      Cookies.remove('percelAddress')
-      router.push(`/order/${data._id}`);
+      Cookies.remove('cartItems');
+      Cookies.remove('address');
+      Cookies.remove('delivery');
+      Cookies.remove('percelAddress');
+      router.push(`/order/${data.id}`);
     } catch (error) {
       console.log(error);
     }
