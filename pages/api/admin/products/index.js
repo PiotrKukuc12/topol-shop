@@ -11,11 +11,23 @@ handler.get(async (req, res) => {
     const searchQuery = req.query.q || '';
     const start = parseInt(req.query._start);
     const end = parseInt(req.query._end);
+    const price = req.query.price || ''
+
+    const priceFilter =
+    price && price !== 'all'
+      ? {
+          price: {
+            $gte: Number(price.split('-')[0]),
+            $lte: Number(price.split('-')[1]),
+          },
+        }
+      : {};
 
     await db.Connect();
     const total = await Product.countDocuments();
     const prod = await Product.find({
       name: { $regex: searchQuery, $options: 'i' },
+      ...priceFilter,
     })
       .skip(start)
       .limit(end);

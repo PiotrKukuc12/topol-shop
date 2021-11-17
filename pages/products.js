@@ -16,8 +16,11 @@ import {
   RangeSliderTrack,
   Wrap,
   WrapItem,
+  IconButton,
   Skeleton,
+  useToast,
 } from '@chakra-ui/react';
+import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Layout from '../components/Layout/layout';
@@ -25,39 +28,86 @@ import axios from 'axios';
 import db from '../libs/db';
 import Product from '../models/Products';
 import NextLink from 'next/link';
-import ReactPaginate from 'react-paginate';
+import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 
 const n = 6;
 
 const Prods = (props) => {
+  const toast = useToast();
   const [price, setPrice] = useState([0, 700]);
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState(null);
-  const { categories } = props;
+  const { categories, length } = props;
 
-  const [currentItems, setCurrentItems] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [itemOffset, setItemOffset] = useState(0);
+  const [start, setStart] = useState(0);
+  const [end, setEnd] = useState(5);
 
+  const [queries, setQueries] = useState('')
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const { data } = await axios.get('api/admin/products?_start=0&_end=10');
-      setItems(data);
-      setLoading(false);
+      const { data } = await axios.get(
+        `api/admin/products?_start=${start}&_end=${end}?${queries}`
+        );
+        setItems(data);
+        setLoading(false);
+      };
+      fetchData();
+    }, [start, queries]);
+    
+    const showPriceHandler = (e) => {
+      setPrice(e);
     };
-    fetchData();
-  }, []);
+    
+    const handleQueries = () => {
+      setQueries(`&price=${price[0]}-${price[1]}`)
+    }
 
-  const showPriceHandler = (e) => {
-    setPrice(e);
+  const handlePageUp = () => {
+    if (end + 5 > length) {
+      setEnd(length);
+      setStart(length - 5);
+    }
+    if (end === length) {
+      toast({
+        title: 'No more items in store',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom-left',
+      });
+    }
+    if (end + 5 < length) {
+      setStart(start + 5);
+      setEnd(end + 5);
+    }
+  };
+
+  const handlePageDown = () => {
+    if (start - 5 <= 0) {
+      setStart(0);
+      setEnd(5);
+    }
+    if (start === 0 && end === 5) {
+      toast({
+        title: 'You cant go back',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'bottom-left',
+      });
+    }
   };
 
   return (
     <Layout title='Products'>
-      <Stack align={{base: 'center', lg: 'normal'}} direction={{ base: 'column', lg: 'row' }}>
+      <Stack
+        align={{ base: 'center', lg: 'normal' }}
+        direction={{ base: 'column', lg: 'row' }}
+      >
         <Stack
-          border='1px solid white'
+          border={useColorModeValue('1px solid black', '1px solid white')}
           mt={5}
           w={{ base: '70%', lg: '300px' }}
           height={{ base: '', lg: '500px' }}
@@ -163,6 +213,7 @@ const Prods = (props) => {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
+                  <Button w='90%' onClick={handleQueries}>Filtr</Button>
         </Stack>
         {loading ? (
           <Wrap width='100%' justify='center' spacing={0}>
@@ -177,38 +228,64 @@ const Prods = (props) => {
             ))}
           </Wrap>
         ) : (
-          <Wrap width='100%' justify='center' spacing={0}>
+          <Wrap pt={5} width='100%' justify='center' spacing={0}>
             {items.map((item) => (
               <WrapItem
                 position='relative'
                 cursor='pointer'
-                p={3}
+                p={{base:'0', md:'2'}}
                 key={item.id}
               >
                 <NextLink href={`/product/${item.id}`}>
                   <Stack spacing={0}>
-                    <Box opacity={1}>
-                      <Image src={item.image} width={340} height={340} />
+                    <Box
+                      opacity={1}
+                      w={{ base: '130px', md: '250px', lg: '340px' }}
+                      h={{base: '130px', md:'250px',lg:'340px'}}
+                      position='relative'
+                    >
+                      <Image src={item.image} layout='fill' />
                     </Box>
                     <Box
                       _hover={{
                         opacity: '1',
-                        transition:'.4s ease opacity'
+                        transition: '.4s ease opacity',
                       }}
                       opacity={0}
-                      transition= '.4s ease opacity'
+                      transition='.4s ease opacity'
                       position='absolute'
+                      w={{ base: '130px', md: '250px', lg: '340px' }}
+                      h={{base: '130px', md:'250px',lg:'340px'}}
                     >
-                      <Image src='/images/sgir.jpg' width={340} height={340} />
+                      <Image src='/images/sgir.jpg' layout='fill' />
                     </Box>
-                    <Text>{item.name}</Text>
+                    <Text fontSize='sm' width='150px'>{item.name}</Text>
                     <Text>{item.price}</Text>
                   </Stack>
                 </NextLink>
               </WrapItem>
             ))}
-            <Box w='100%' display='flex' justifyContent='center' align='center'>
-              <ReactPaginate />
+            <Box
+              py={5}
+              w='100%'
+              display='flex'
+              justifyContent='center'
+              align='center'
+            >
+              {/* <ArrowLeftIcon /> */}
+              <IconButton
+                onClick={handlePageDown}
+                mx={2}
+                icon={<ArrowLeftIcon />}
+              />
+              <Button>1</Button>
+              <Button mx={2}>2</Button>
+              <Button>3</Button>
+              <IconButton
+                onClick={handlePageUp}
+                mx={2}
+                icon={<ArrowRightIcon />}
+              />
             </Box>
           </Wrap>
         )}
@@ -220,11 +297,13 @@ const Prods = (props) => {
 export async function getStaticProps() {
   db.Connect();
   const categories = await Product.find().distinct('category');
+  const productsLength = await Product.countDocuments();
   db.Disconnect();
 
   return {
     props: {
       categories: categories,
+      length: productsLength,
     },
   };
 }
