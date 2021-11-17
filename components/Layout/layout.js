@@ -123,9 +123,9 @@ const Layout = ({ title, children }) => {
           </DrawerContent>
         </Drawer>
 
-        <Box>
+        <section>
           {children}
-        </Box>
+        </section>
       </Box>
     </>
   );

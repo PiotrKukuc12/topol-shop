@@ -4,7 +4,7 @@ import Product from '../../../../models/Products';
 import { isAuth } from '../../../../libs/auth';
 
 const handler = nextConnect();
-handler.use(isAuth);
+// handler.use(isAuth);
 
 handler.get(async (req, res) => {
   try {

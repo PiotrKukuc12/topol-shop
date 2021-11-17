@@ -1,7 +1,5 @@
 .next
 node_modules
-jest.config.js
-jest.setup.js
-__mocks__
-__tests__
 .env
+__tests__
+__mocks__

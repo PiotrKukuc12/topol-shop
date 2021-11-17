@@ -1,157 +1,116 @@
 import {
-  Heading,
   Stack,
-  Text,
-  UnorderedList,
-  ListItem,
+  Accordion,
   Box,
-  Input,
-  Tooltip,
+  Text,
   Button,
+  Heading,
+  Checkbox,
+  AccordionItem,
+  AccordionIcon,
+  AccordionPanel,
+  AccordionButton,
+  RangeSlider,
+  RangeSliderFilledTrack,
+  RangeSliderThumb,
+  RangeSliderTrack,
+  Wrap,
+  WrapItem,
+  Skeleton,
 } from '@chakra-ui/react';
-import Layout from '../components/Layout/layout';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import NextLink from 'next/link';
+import Layout from '../components/Layout/layout';
+import axios from 'axios';
 import db from '../libs/db';
 import Product from '../models/Products';
-import { useContext, useState } from 'react';
-import { useColorModeValue } from '@chakra-ui/color-mode';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/dist/client/router';
+import NextLink from 'next/link';
+import ReactPaginate from 'react-paginate';
 
-const prices = [
-  {
-    name: '$1 to $50',
-    value: '1-50',
-  },
-  {
-    name: '$51 to $200',
-    value: '51-200',
-  },
-  {
-    name: '$201 to $1000',
-    value: '201-1000',
-  },
-];
+const n = 6;
 
-const Products = (props) => {
-  const { products, leng, categories } = props;
-  const router = useRouter();
-  const [items, setItems] = useState(products);
+const Prods = (props) => {
+  const [price, setPrice] = useState([0, 700]);
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState(null);
+  const { categories } = props;
 
-  const getMorePost = async () => {
-    let controller = new AbortController();
-    try {
-      const res = await fetch(`/api/products?_skip=${items.length}&_limit=10`, {
-        signal: controller.signal,
-      });
-      const newPosts = await res.json();
-      setItems((post) => [...post, ...newPosts]);
-      controller = null;
-    } catch (error) {
-      console.log(error);
-    }
-    return () => controller?.abort();
-  };
+  const [currentItems, setCurrentItems] = useState(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
 
-  const filterSearch = ({ category, sort, min, max, searchQuery, price }) => {
-    const path = router.pathname;
-    const { query } = router;
-    if (searchQuery) query.searchQuery = searchQuery;
-    if (sort) query.sort = sort;
-    if (category) query.category = category;
-    if (price) query.price = price;
-    if (min) query.min ? query.min : query.min === 0 ? 0 : min;
-    if (max) query.max ? query.max : query.max === 0 ? 0 : max;
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const { data } = await axios.get('api/admin/products?_start=0&_end=10');
+      setItems(data);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
-    router.push({
-      pathname: path,
-      query: query,
-    });
-  };
-
-  const categoryHandler = (e) => {
-    filterSearch({ category: e.target.value });
-  };
-  const sortHandler = (e) => {
-    filterSearch({ sort: e.target.value });
-  };
-  const priceHandler = (e) => {
-    filterSearch({ price: e.target.value });
-  };
-  const searchHandler = (e) => {
-    if (e.key === 'Enter') {
-      filterSearch({ searchQuery: e.target.value })
-    }
+  const showPriceHandler = (e) => {
+    setPrice(e);
   };
 
   return (
     <Layout title='Products'>
-      <Stack data-testid='Index-1' direction={{ base: 'column', lg: 'row' }}>
+      <Stack align={{base: 'center', lg: 'normal'}} direction={{ base: 'column', lg: 'row' }}>
         <Stack
-          w={{ base: 'auto', lg: '150px' }}
+          border='1px solid white'
+          mt={5}
+          w={{ base: '70%', lg: '300px' }}
           height={{ base: '', lg: '500px' }}
           marginLeft={2}
           align='center'
         >
-          <Stack
-            spacing={{ base: '20', lg: '0' }}
-            direction={{ base: 'row', lg: 'column' }}
-          >
-            <Box>
-              <Heading fontSize='xl' mt={5}>
-                Search
-              </Heading>
-              <Input placeholder='Find item'   onKeyDown={searchHandler} mt={2} />
-              <Heading fontSize='xl' mt={5}>
-                Categories
-              </Heading>
-              <UnorderedList>
-                <ListItem>
-                  <Button
-                    onClick={categoryHandler}
-                    value='all'
-                    fontWeight='normal'
-                    variant='link'
-                  >
-                    All
-                  </Button>
-                </ListItem>
-                {categories.map((item) => (
-                  <ListItem key={item}>
-                    <Button
+          <Heading>Filter by</Heading>
+          <Accordion w='95%' mt={5} allowToggle>
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex='1' textAlign='left'>
+                    <Heading fontSize='2xl'>Category</Heading>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel>
+                <Stack>
+                  {categories.map((item) => (
+                    <Checkbox
+                      key={item}
                       fontWeight='normal'
-                      ml={2}
                       variant='link'
                       value={item}
-                      onClick={categoryHandler}
+                      //   onChange={categoryHandler}
                     >
                       {item}
-                    </Button>
-                  </ListItem>
-                ))}
-              </UnorderedList>
-            </Box>
-            <Box>
-              <Heading fontSize='xl' mt={5}>
-                Sort by
-              </Heading>
-              <UnorderedList>
-                <ListItem>
+                    </Checkbox>
+                  ))}
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+              <AccordionButton>
+                <Box flex='1' textAlign='left'>
+                  <Heading fontSize='2xl'>Sort by</Heading>
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                <Stack align='flex-start'>
                   <Button
-                    onClick={sortHandler}
+                    // onClick={sortHandler}
                     value='highest'
-                    ml={2}
                     fontWeight='normal'
                     variant='link'
                   >
                     Highest
                   </Button>
-                </ListItem>
-                <ListItem>
+
                   <Button
-                    onClick={sortHandler}
+                    // onClick={sortHandler}
                     value='lowest'
                     ml={2}
                     fontWeight='normal'
@@ -159,10 +118,8 @@ const Products = (props) => {
                   >
                     Lowest
                   </Button>
-                </ListItem>
-                <ListItem>
                   <Button
-                    onClick={sortHandler}
+                    // onClick={sortHandler}
                     value='newest'
                     ml={2}
                     fontWeight='normal'
@@ -170,182 +127,106 @@ const Products = (props) => {
                   >
                     Newest
                   </Button>
-                </ListItem>
-              </UnorderedList>
-            </Box>
-            <Box>
-              <Heading fontSize='xl' mt={5}>
-                Price range
-              </Heading>
-              <UnorderedList>
-                <ListItem>
-                  <Button
-                    fontWeight='normal'
-                    onClick={priceHandler}
-                    variant='link'
-                    value='all'
-                  >
-                    All
-                  </Button>
-                </ListItem>
-                {prices.map((item) => (
-                  <ListItem key={item.value}>
-                    <Button
-                      ml={2}
-                      fontWeight='normal'
-                      onClick={priceHandler}
-                      variant='link'
-                      value={item.value}
-                    >
-                      {item.name}
-                    </Button>
-                  </ListItem>
-                ))}
-              </UnorderedList>
-            </Box>
-          </Stack>
-        </Stack>
-
-        <InfiniteScroll
-          dataLength={leng}
-          next={getMorePost}
-          hasMore={leng !== items.length ? true : false}
-          // loader={
-          //   <Box m={100}>
-          //     <Spinner
-          //       position='absolute'
-          //       top='95%'
-          //       left='50%'
-          //       thickness='4px'
-          //       speed='0.65s'
-          //       emptyColor='gray.200'
-          //       color='blue.500'
-          //       size='xl'
-          //       align='center'
-          //       justifyContent='center'
-          //       marginx='200px'
-          //     />
-          //   </Box>
-          // }
-          style={{
-            marginLeft: '20px',
-            display: 'flex',
-            padding: '10px',
-            flexWrap: 'wrap',
-            width: '',
-            justifyContent: 'space-between',
-          }}
-        >
-          {items.map((item) => (
-            <div key={item._id}>
-              <NextLink href={`/product/${item._id}`}>
-                <Stack
-                  _hover={{
-                    transform: 'scale(1.02)',
-                    transition: 'transform .2s ease',
-                  }}
-                  key={item.name}
-                  cursor='pointer'
-                  marginTop={5}
-                  marginX={1.5}
-                  backgroundColor={useColorModeValue('white', 'whiteAlpha.50')}
-                  border={useColorModeValue('1px solid black', '')}
-                  borderRadius='10px'
-                  width={{ base: '128px', md: '200px', lg: '250px' }}
-                  height={{ base: '240px', md: '300px', lg: '340px' }}
-                  // boxShadow='8px 8px 24px 0px rgba(66, 68, 90, 1)'
-                >
-                  <Tooltip placement='auto' label={item.name}>
-                    <Box align='center' mt={5}>
-                      <Image
-                        placeholder='blur'
-                        blurDataURL='images/placeholderimage.png'
-                        src={item.image}
-                        height={220}
-                        width={220}
-                      />
-                    </Box>
-                  </Tooltip>
-                  <Stack direction='column' pl={2}>
-                    <Stack direction='column'>
-                      <Text
-                        fontSize={{ base: 'sm', md: 'md' }}
-                        fontWeight='medium'
-                        color={useColorModeValue(
-                          'blackAlpha.900',
-                          'whiteAlpha.900'
-                        )}
-                      >
-                        {item.name}
-                      </Text>
-                      <Text
-                        fontSize={{ base: 'sm', md: 'md', lg: 'lg' }}
-                        fontWeight='medium'
-                        color={useColorModeValue(
-                          'blackAlpha.700',
-                          'whiteAlpha.700'
-                        )}
-                      >
-                        ${item.price}
-                      </Text>
-                    </Stack>
-                  </Stack>
                 </Stack>
-              </NextLink>
-            </div>
-          ))}
-        </InfiniteScroll>
+              </AccordionPanel>
+            </AccordionItem>
+            <AccordionItem>
+              <h2>
+                <AccordionButton>
+                  <Box flex='1' textAlign='left'>
+                    <Heading fontSize='2xl'>Price</Heading>
+                  </Box>
+                  <AccordionIcon />
+                </AccordionButton>
+              </h2>
+              <AccordionPanel>
+                <Box>
+                  <RangeSlider
+                    size='lg'
+                    aria-label={['min', 'max']}
+                    defaultValue={[0, 600]}
+                    // onChangeEnd={priceHandler}
+                    onChange={showPriceHandler}
+                    max={700}
+                  >
+                    <RangeSliderTrack>
+                      <RangeSliderFilledTrack />
+                    </RangeSliderTrack>
+                    <RangeSliderThumb index={0} />
+                    <RangeSliderThumb index={1} />
+                  </RangeSlider>
+                  <Stack mt={5} direction='row' justifyContent='space-between'>
+                    <Text>{price[0]} $</Text>
+                    <Text>{price[1]} $</Text>
+                  </Stack>
+                </Box>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </Stack>
+        {loading ? (
+          <Wrap width='100%' justify='center' spacing={0}>
+            {[...Array(n)].map((e, i) => (
+              <WrapItem p={3} key={i}>
+                <Stack>
+                  <Skeleton w={340} h={340}></Skeleton>
+                  <Skeleton w={60} h={5}></Skeleton>
+                  <Skeleton w={20} h={5}></Skeleton>
+                </Stack>
+              </WrapItem>
+            ))}
+          </Wrap>
+        ) : (
+          <Wrap width='100%' justify='center' spacing={0}>
+            {items.map((item) => (
+              <WrapItem
+                position='relative'
+                cursor='pointer'
+                p={3}
+                key={item.id}
+              >
+                <NextLink href={`/product/${item.id}`}>
+                  <Stack spacing={0}>
+                    <Box opacity={1}>
+                      <Image src={item.image} width={340} height={340} />
+                    </Box>
+                    <Box
+                      _hover={{
+                        opacity: '1',
+                        transition:'.4s ease opacity'
+                      }}
+                      opacity={0}
+                      transition= '.4s ease opacity'
+                      position='absolute'
+                    >
+                      <Image src='/images/sgir.jpg' width={340} height={340} />
+                    </Box>
+                    <Text>{item.name}</Text>
+                    <Text>{item.price}</Text>
+                  </Stack>
+                </NextLink>
+              </WrapItem>
+            ))}
+            <Box w='100%' display='flex' justifyContent='center' align='center'>
+              <ReactPaginate />
+            </Box>
+          </Wrap>
+        )}
       </Stack>
     </Layout>
   );
 };
 
-export async function getServerSideProps({ query }) {
-  await db.Connect();
-  const price = query.price || '';
-  const category = query.category || '';
-  const sort = query.sort || '';
-  const searchQuery = query.query || '';
-
+export async function getStaticProps() {
+  db.Connect();
   const categories = await Product.find().distinct('category');
-  const categoryFilter = category && category !== 'all' ? { category } : {};
-  const priceFilter =
-    price && price !== 'all'
-      ? {
-          price: {
-            $gte: Number(price.split('-')[0]),
-            $lte: Number(price.split('-')[1]),
-          },
-        }
-      : {};
-
-  const order =
-    sort === 'featured'
-      ? { featured: -1 }
-      : sort === 'lowest'
-      ? { price: 1 }
-      : sort === 'highest'
-      ? { price: -1 }
-      : sort === 'newest'
-      ? { createdAt: -1 }
-      : { _id: -1 };
-
-  const products = await Product.find({
-    name: { $regex: searchQuery, $options: 'i' },
-    ...categoryFilter,
-    ...priceFilter,
-  })
-    .sort(order)
-    .lean();
-  const leng = await Product.countDocuments();
+  db.Disconnect();
 
   return {
     props: {
       categories: categories,
-      products: products.map(db.convertDocToObj),
-      leng: leng,
     },
   };
 }
 
-export default dynamic(() => Promise.resolve(Products), { ssr: false });
+export default Prods;
