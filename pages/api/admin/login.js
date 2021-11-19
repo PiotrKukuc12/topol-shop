@@ -1,6 +1,5 @@
 import nextConnect from "next-connect";
 import { signToken } from "../../../libs/auth";
-import bcrypt from 'bcrypt'
 
 
 const handler = nextConnect()
