@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   Heading,
-  Checkbox,
   AccordionItem,
   AccordionIcon,
   AccordionPanel,
@@ -15,92 +14,59 @@ import {
   RangeSliderThumb,
   RangeSliderTrack,
   Wrap,
-  WrapItem,
   IconButton,
-  Skeleton,
   useToast,
 } from '@chakra-ui/react';
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Layout from '../components/Layout/layout';
-import axios from 'axios';
 import db from '../libs/db';
 import Product from '../models/Products';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import ProductCart from '../components/products/product-cart';
+import { useRouter } from 'next/dist/client/router';
 
-const pageCount = 12;
+const PAGE_SIZE = 6;
 
 const Prods = (props) => {
+  const router = useRouter();
   const toast = useToast();
   const [price, setPrice] = useState([0, 700]);
-  const [loading, setLoading] = useState(true);
-  const [items, setItems] = useState(null);
-  const { categories, length } = props;
+  const { categories, countProducts, products, pages } = props;
 
-  const [start, setStart] = useState(0);
-  const [end, setEnd] = useState(pageCount);
+  console.log(pages)
 
-  const [queries, setQueries] = useState('');
+  const filterSearch = ({ page, category, min, max,sort, price }) => {
+    const path = router.pathname;
+    const { query } = router;
+    if (page) query.page = page;
+    if (category) query.category = category;
+    if (sort) query.sort = sort;
+    if (price) query.price = price;
+    if (min) query.min ? query.min : query.min === 0 ? 0 : min;
+    if (max) query.max ? query.max : query.max === 0 ? 0 : max;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const { data } = await axios.get(
-        `api/admin/products?_start=${start}&_end=${end}?${queries}`
-      );
-      setItems(data);
-      setLoading(false);
-    };
-    fetchData();
-  }, [start, queries]);
+    router.push({
+      pathname: path,
+      query: query,
+    });
+  };
+
+  const categoryHandler = (e) => {
+    filterSearch({ category: e.target.value });
+  };
+  const pageHandler = (e, page) => {
+    filterSearch({ page });
+  };
+  const priceHandler = (e) => {
+    filterSearch({ price: `${price[0]}-${price[1]}` });
+  };
+  const sortHandler = (e) => {
+    filterSearch({ sort: e.target.value });
+  };
 
   const showPriceHandler = (e) => {
     setPrice(e);
-  };
-
-  const handleQueries = () => {
-    setQueries(`&price=${price[0]}-${price[1]}`);
-  };
-
-  const handlePageUp = () => {
-    if (end + pageCount > length) {
-      setEnd(length);
-      if(end - pageCount < 0) {
-        setStart(0)
-      } else {
-        setStart(end - pageCount)
-      };
-    }
-    if (end === length) {
-      toast({
-        title: 'No more items in store',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
-    }
-    if (end + pageCount < length) {
-      setStart(start + pageCount);
-      setEnd(end + pageCount);
-    }
-  };
-
-  const handlePageDown = () => {
-    if (start - pageCount <= 0) {
-      setStart(0);
-      setEnd(pageCount);
-    }
-    if (start === 0 && end === pageCount) {
-      toast({
-        title: 'You cant go back',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom-left',
-      });
-    }
   };
 
   return (
@@ -132,17 +98,26 @@ const Prods = (props) => {
                 </AccordionButton>
               </h2>
               <AccordionPanel>
-                <Stack>
+                <Stack align='start'>
+                  <Button
+                    fontWeight='normal'
+                    variant='link'
+                    value='all'
+                    onClick={categoryHandler}
+                  >
+                    All
+                  </Button>
                   {categories.map((item) => (
-                    <Checkbox
+                    <Button
+                      pl={2}
                       key={item}
                       fontWeight='normal'
                       variant='link'
                       value={item}
-                      //   onChange={categoryHandler}
+                      onClick={categoryHandler}
                     >
                       {item}
-                    </Checkbox>
+                    </Button>
                   ))}
                 </Stack>
               </AccordionPanel>
@@ -157,31 +132,40 @@ const Prods = (props) => {
               <AccordionPanel>
                 <Stack align='flex-start'>
                   <Button
-                    // onClick={sortHandler}
-                    value='highest'
+                    onClick={sortHandler}
+                    value='featured'
                     fontWeight='normal'
                     variant='link'
                   >
-                    Highest
+                    Featured
                   </Button>
 
                   <Button
-                    // onClick={sortHandler}
+                    onClick={sortHandler}
                     value='lowest'
                     ml={2}
                     fontWeight='normal'
                     variant='link'
                   >
-                    Lowest
+                    Price: Low to High
                   </Button>
                   <Button
-                    // onClick={sortHandler}
+                    onClick={sortHandler}
+                    value='highest'
+                    ml={2}
+                    fontWeight='normal'
+                    variant='link'
+                  >
+                    Price: High to Low
+                  </Button>
+                  <Button
+                    onClick={sortHandler}
                     value='newest'
                     ml={2}
                     fontWeight='normal'
                     variant='link'
                   >
-                    Newest
+                    Newest Arrivals
                   </Button>
                 </Stack>
               </AccordionPanel>
@@ -219,60 +203,85 @@ const Prods = (props) => {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
-          <Button w='90%' onClick={handleQueries}>
+          <Button w='90%' onClick={priceHandler}>
             Filtr
           </Button>
         </Stack>
-        {loading ? (
-          <Wrap width='100%' justify='center' spacing={0}>
-            {[...Array(6)].map((e, i) => (
-              <WrapItem p={3} key={i}>
-                <Stack>
-                  <Skeleton
-                    w={{ base: '130px', md: '250px', lg: '340px' }}
-                    h={{ base: '130px', md: '250px', lg: '340px' }}
-                  ></Skeleton>
-                  <Skeleton
-                    w={{ base: '25', md: '40', lg: '60' }}
-                    h={5}
-                  ></Skeleton>
-                  <Skeleton w={20} h={5}></Skeleton>
-                </Stack>
-              </WrapItem>
-            ))}
-          </Wrap>
-        ) : (
-          <Wrap pb={50} width='100%' justify='center' spacing={0}>
-            {items.map((item) => (
-              <ProductCart
-                key={item.id}
-                name={item.name}
-                price={item.price}
-                image={item.image}
-                id={item.id}
-              />
-            ))}
-          </Wrap>
-        )}
-        </Stack>
-          <Box mb="10px" w='100vw' justifyContent='center' align='center'>
-            <IconButton onClick={handlePageDown} mr={10} icon={<ArrowLeftIcon />} />
-            <IconButton onClick={handlePageUp} icon={<ArrowRightIcon />} />
-          </Box>
+        <Wrap pb={50} width='100%' justify='center' spacing={0}>
+          {products.map((item) => (
+            <ProductCart
+              name={item.name}
+              price={item.price}
+              image={item.image}
+              id={item._id}
+            />
+          ))}
+        </Wrap>
+      </Stack>
+      <Box mb='10px' w='100vw' justifyContent='center' align='center'>
+        <IconButton mr={10} icon={<ArrowLeftIcon />} />
+        <IconButton icon={<ArrowRightIcon />} />
+      </Box>
     </Layout>
   );
 };
 
-export async function getStaticProps() {
-  db.Connect();
+export async function getServerSideProps({ query }) {
+  await db.Connect();
+  const pageSize = query.pageSize || PAGE_SIZE;
+  const sort = query.sort || '';
+  const page = query.page || 1;
+  const category = query.category || '';
+  const price = query.price || '';
+
+  const categoryFilter = category && category !== 'all' ? { category } : {};
+  const priceFilter =
+    price && price !== 'all'
+      ? {
+          price: {
+            $gte: Number(price.split('-')[0]),
+            $lte: Number(price.split('-')[1]),
+          },
+        }
+      : {};
+
+  const order =
+    sort === 'featured'
+      ? { featured: -1 }
+      : sort === 'lowest'
+      ? { price: 1 }
+      : sort === 'highest'
+      ? { price: -1 }
+      : sort === 'toprated'
+      ? { createdAt: -1 }
+      : { _id: -1 };
+
   const categories = await Product.find().distinct('category');
-  const productsLength = await Product.countDocuments();
-  db.Disconnect();
+  const productDocs = await Product.find({
+    ...categoryFilter,
+    ...priceFilter,
+  })
+    .sort(order)
+    .skip(pageSize * (page - 1))
+    .limit(pageSize)
+    .lean();
+
+  const countProducts = await Product.countDocuments({
+    ...categoryFilter,
+    ...priceFilter,
+  });
+
+  await db.Disconnect();
+
+  const products = productDocs.map(db.convertDocToObj);
 
   return {
     props: {
-      categories: categories,
-      length: productsLength,
+      products,
+      categories,
+      countProducts,
+      page,
+      pages: Math.ceil(countProducts / pageSize),
     },
   };
 }

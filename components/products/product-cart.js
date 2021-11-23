@@ -1,4 +1,3 @@
-
 import { WrapItem, Stack, Box, Text } from '@chakra-ui/layout';
 import NextLink from 'next/link';
 import Image from 'next/image';
@@ -7,11 +6,10 @@ import dynamic from 'next/dynamic';
 const ProductCart = ({ name, price, id, image }) => {
   return (
     <WrapItem
-    key={id}
+      key={id}
       position='relative'
       cursor='pointer'
       p={{ base: '0', md: '2' }}
-      key={id}
     >
       <NextLink href={`/product/${id}`}>
         <Stack spacing={0}>
@@ -21,7 +19,7 @@ const ProductCart = ({ name, price, id, image }) => {
             h={{ base: '130px', md: '250px', lg: '340px' }}
             position='relative'
           >
-            <Image src={image} layout='fill' />
+            <Image src={image} layout='fill' alt={name} />
           </Box>
           <Box
             _hover={{
@@ -34,7 +32,7 @@ const ProductCart = ({ name, price, id, image }) => {
             w={{ base: '130px', md: '250px', lg: '340px' }}
             h={{ base: '130px', md: '250px', lg: '340px' }}
           >
-            <Image src='/images/sgir.jpg' layout='fill' />
+            <Image src='/images/sgir.jpg' layout='fill' alt={name} />
           </Box>
           <Text fontSize='sm' width='150px'>
             {name}
@@ -47,5 +45,5 @@ const ProductCart = ({ name, price, id, image }) => {
 };
 
 export default dynamic(() => Promise.resolve(ProductCart), {
-  ssr: false,
+  ssr: true,
 });
