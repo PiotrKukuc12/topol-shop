@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { Box, Heading, Stack, Text, Icon } from '@chakra-ui/react';
+import { Box, Stack, Text, Icon } from '@chakra-ui/react';
 import { useContext, useState } from 'react';
 import Layout from '../components/Layout/layout';
 import { BsPaypal, BsCreditCardFill } from 'react-icons/bs';

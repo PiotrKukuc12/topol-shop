@@ -1,7 +1,6 @@
 import {
   Stack,
   Box,
-  Button,
   Text,
   Heading,
   Table,
@@ -12,9 +11,8 @@ import {
   Tbody,
   useToast,
 } from '@chakra-ui/react';
-import { useContext, useEffect, useReducer, useState } from 'react';
+import {  useEffect, useState } from 'react';
 import Layout from '../../components/Layout/layout';
-import { Store } from '../../libs/Store';
 import Image from 'next/image';
 import db from '../../libs/db';
 import Order from '../../models/Order';
@@ -22,10 +20,11 @@ import axios from 'axios';
 import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 
+
 const Orderid = (props) => {
   const { order } = props;
-  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
-  const [loadingPay, setLoadingPay] = useState(false);
+  const [, paypalDispatch] = usePayPalScriptReducer();
+  // const [loadingPay, setLoadingPay] = useState(false);
   const [paid, setPaid] = useState(null);
   const toast = useToast();
 
@@ -50,7 +49,7 @@ const Orderid = (props) => {
     loadPaypalScript();
   }, [order]);
 
-  function createOrder(data, actions) {
+  function createOrder(actions) {
     return actions.order.create({
       purchase_units: [
         {
@@ -60,7 +59,7 @@ const Orderid = (props) => {
     });
   }
 
-  function onApprove(data, actions) {
+  function onApprove(actions) {
     return actions.order.capture().then(async function (details) {
       try {
         setLoadingPay(true);
@@ -86,7 +85,7 @@ const Orderid = (props) => {
 
   return (
     <Layout title='Order summary'>
-      <Heading mt={2} ml='8%' fontSize='3xl'>
+      <Heading mt={2} ml='8%' fontSize={{base:'xl',md:'2xl',lg:'3xl'}}>
         Order {order._id}
       </Heading>
       <Stack
@@ -99,18 +98,19 @@ const Orderid = (props) => {
 
       >
         <Stack
-          w={{base:'80%',lg:'40%'}}
+          w={{base:'90%',lg:'40%'}}
           h='640px'
+          borderRadius='10px'
           border={useColorModeValue('1px solid black', '1px solid white')}
         >
           <Box>
             <Heading ml={5} my={5} fontSize='xl'>
               Delivery Address
             </Heading>
-            <Stack direction='row' spacing={10}>
+            <Stack direction={{base:'column-reverse',lg:'row'}} align='center' spacing={10}>
               <Box
-                ml={10}
-                w='50%'
+                ml={{base:'0',lg:'10'}}
+                w={{base:'80%',lg:'40%'}}
                 p={5}
                 borderRadius='10px'
                 backgroundColor={useColorModeValue(
@@ -118,7 +118,7 @@ const Orderid = (props) => {
                   'whiteAlpha.200'
                 )}
               >
-                <Text>
+                <Text align={{base:'center', lg:'left'}}>
                   {order.shippingAddress.fullName} <br />{' '}
                   {order.shippingAddress.address} <br />{' '}
                   {order.shippingAddress.postalCode}{' '}
@@ -128,7 +128,7 @@ const Orderid = (props) => {
                 </Text>
               </Box>
               <Box
-                w='25%'
+                w={{base:'80%',lg:'35%'}}
                 p={5}
                 borderRadius='10px'
                 backgroundColor={useColorModeValue(
@@ -156,22 +156,23 @@ const Orderid = (props) => {
                 'blackAlpha.200',
                 'whiteAlpha.200'
               )}
-              h='280px'
-              overflowY={order.orderItems.length >= 9 ? 'scroll' : 'none'}
+              h={{base:'150px', lg:'340px'}}
+              overflowY='scroll'
             >
               <Table size='sm'>
                 <Thead>
                   <Tr>
-                    <Th>Image</Th>
+                    <Th display={{base:"none", lg:'inline-block'}}>Image</Th>
                     <Th>Name</Th>
-                    <Th isNumeric>Quantity</Th>
+                    <Th isNumeric display={{base:"none", md:"table-cell"}}>Quantity</Th>
+                    <Th isNumeric display={{base:"table-cell", md:'none'}}>Quan</Th>
                     <Th isNumeric>Price</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {order.orderItems.map((item) => (
                     <Tr key={item.id}>
-                      <Td>
+                      <Td display={{base:"none", lg:'inline-block'}}>
                         <Image src={item.image} width={50} height={50} />
                       </Td>
                       <Td>{item.name}</Td>
@@ -185,9 +186,10 @@ const Orderid = (props) => {
           </Box>
         </Stack>
         <Stack
-          w={{base:'80%',lg:'25%'}}
+          w={{base:'90%',lg:'25%'}}
           h='auto'
           overflowY= 'hidden'
+          borderRadius='10px'
           border={useColorModeValue('1px solid black', '1px solid white')}
         >
           <Box>
@@ -196,7 +198,9 @@ const Orderid = (props) => {
             </Heading>
             <Stack direction='row' spacing={10}>
               <Box
-                ml={10}
+
+                // ml={10}
+                margin='auto'
                 w='70%'
                 p={5}
                 borderRadius='10px'
@@ -205,7 +209,7 @@ const Orderid = (props) => {
                   'whiteAlpha.200'
                 )}
               >
-                <Stack direction='row' justifyContent='space-between'>
+                <Stack  direction='row' justifyContent='space-between'>
                   <Text>Method:</Text>
                   <Text> {order.paymentMethod} </Text>
                 </Stack>
@@ -220,7 +224,9 @@ const Orderid = (props) => {
             </Heading>
             <Stack>
               <Box
-                ml={10}
+              align='center'
+                // ml={10}
+                margin='auto'
                 w='70%'
                 p={5}
                 borderRadius='10px'
@@ -248,7 +254,7 @@ const Orderid = (props) => {
             <Heading ml={5} my={5} fontSize='xl'>
               Payment
             </Heading>
-            <Box p={5}>
+            <Box align='center' p={5}>
               <PayPalButtons
                 createOrder={createOrder}
                 onApprove={onApprove}

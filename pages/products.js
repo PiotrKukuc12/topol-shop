@@ -22,15 +22,14 @@ import {
 } from '@chakra-ui/react';
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import Layout from '../components/Layout/layout';
 import axios from 'axios';
 import db from '../libs/db';
 import Product from '../models/Products';
-import NextLink from 'next/link';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
+import ProductCart from '../components/products/product-cart';
 
-const n = 6;
+const pageCount = 12;
 
 const Prods = (props) => {
   const toast = useToast();
@@ -40,34 +39,38 @@ const Prods = (props) => {
   const { categories, length } = props;
 
   const [start, setStart] = useState(0);
-  const [end, setEnd] = useState(5);
+  const [end, setEnd] = useState(pageCount);
 
-  const [queries, setQueries] = useState('')
-  
+  const [queries, setQueries] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const { data } = await axios.get(
         `api/admin/products?_start=${start}&_end=${end}?${queries}`
-        );
-        setItems(data);
-        setLoading(false);
-      };
-      fetchData();
-    }, [start, queries]);
-    
-    const showPriceHandler = (e) => {
-      setPrice(e);
+      );
+      setItems(data);
+      setLoading(false);
     };
-    
-    const handleQueries = () => {
-      setQueries(`&price=${price[0]}-${price[1]}`)
-    }
+    fetchData();
+  }, [start, queries]);
+
+  const showPriceHandler = (e) => {
+    setPrice(e);
+  };
+
+  const handleQueries = () => {
+    setQueries(`&price=${price[0]}-${price[1]}`);
+  };
 
   const handlePageUp = () => {
-    if (end + 5 > length) {
+    if (end + pageCount > length) {
       setEnd(length);
-      setStart(length - 5);
+      if(end - pageCount < 0) {
+        setStart(0)
+      } else {
+        setStart(end - pageCount)
+      };
     }
     if (end === length) {
       toast({
@@ -78,18 +81,18 @@ const Prods = (props) => {
         position: 'bottom-left',
       });
     }
-    if (end + 5 < length) {
-      setStart(start + 5);
-      setEnd(end + 5);
+    if (end + pageCount < length) {
+      setStart(start + pageCount);
+      setEnd(end + pageCount);
     }
   };
 
   const handlePageDown = () => {
-    if (start - 5 <= 0) {
+    if (start - pageCount <= 0) {
       setStart(0);
-      setEnd(5);
+      setEnd(pageCount);
     }
-    if (start === 0 && end === 5) {
+    if (start === 0 && end === pageCount) {
       toast({
         title: 'You cant go back',
         status: 'error',
@@ -103,15 +106,18 @@ const Prods = (props) => {
   return (
     <Layout title='Products'>
       <Stack
+        position='relative'
         align={{ base: 'center', lg: 'normal' }}
         direction={{ base: 'column', lg: 'row' }}
       >
         <Stack
+          pb={2}
           border={useColorModeValue('1px solid black', '1px solid white')}
-          mt={5}
+          my={5}
+          borderRadius='10px'
           w={{ base: '70%', lg: '300px' }}
           height={{ base: '', lg: '500px' }}
-          marginLeft={2}
+          marginLeft={5}
           align='center'
         >
           <Heading>Filter by</Heading>
@@ -213,83 +219,46 @@ const Prods = (props) => {
               </AccordionPanel>
             </AccordionItem>
           </Accordion>
-                  <Button w='90%' onClick={handleQueries}>Filtr</Button>
+          <Button w='90%' onClick={handleQueries}>
+            Filtr
+          </Button>
         </Stack>
         {loading ? (
           <Wrap width='100%' justify='center' spacing={0}>
-            {[...Array(n)].map((e, i) => (
+            {[...Array(6)].map((e, i) => (
               <WrapItem p={3} key={i}>
                 <Stack>
-                  <Skeleton w={340} h={340}></Skeleton>
-                  <Skeleton w={60} h={5}></Skeleton>
+                  <Skeleton
+                    w={{ base: '130px', md: '250px', lg: '340px' }}
+                    h={{ base: '130px', md: '250px', lg: '340px' }}
+                  ></Skeleton>
+                  <Skeleton
+                    w={{ base: '25', md: '40', lg: '60' }}
+                    h={5}
+                  ></Skeleton>
                   <Skeleton w={20} h={5}></Skeleton>
                 </Stack>
               </WrapItem>
             ))}
           </Wrap>
         ) : (
-          <Wrap pt={5} width='100%' justify='center' spacing={0}>
+          <Wrap pb={50} width='100%' justify='center' spacing={0}>
             {items.map((item) => (
-              <WrapItem
-                position='relative'
-                cursor='pointer'
-                p={{base:'0', md:'2'}}
+              <ProductCart
                 key={item.id}
-              >
-                <NextLink href={`/product/${item.id}`}>
-                  <Stack spacing={0}>
-                    <Box
-                      opacity={1}
-                      w={{ base: '130px', md: '250px', lg: '340px' }}
-                      h={{base: '130px', md:'250px',lg:'340px'}}
-                      position='relative'
-                    >
-                      <Image src={item.image} layout='fill' />
-                    </Box>
-                    <Box
-                      _hover={{
-                        opacity: '1',
-                        transition: '.4s ease opacity',
-                      }}
-                      opacity={0}
-                      transition='.4s ease opacity'
-                      position='absolute'
-                      w={{ base: '130px', md: '250px', lg: '340px' }}
-                      h={{base: '130px', md:'250px',lg:'340px'}}
-                    >
-                      <Image src='/images/sgir.jpg' layout='fill' />
-                    </Box>
-                    <Text fontSize='sm' width='150px'>{item.name}</Text>
-                    <Text>{item.price}</Text>
-                  </Stack>
-                </NextLink>
-              </WrapItem>
+                name={item.name}
+                price={item.price}
+                image={item.image}
+                id={item.id}
+              />
             ))}
-            <Box
-              py={5}
-              w='100%'
-              display='flex'
-              justifyContent='center'
-              align='center'
-            >
-              {/* <ArrowLeftIcon /> */}
-              <IconButton
-                onClick={handlePageDown}
-                mx={2}
-                icon={<ArrowLeftIcon />}
-              />
-              <Button>1</Button>
-              <Button mx={2}>2</Button>
-              <Button>3</Button>
-              <IconButton
-                onClick={handlePageUp}
-                mx={2}
-                icon={<ArrowRightIcon />}
-              />
-            </Box>
           </Wrap>
         )}
-      </Stack>
+        </Stack>
+          <Box mb="10px" w='100vw' justifyContent='center' align='center'>
+            <IconButton onClick={handlePageDown} mr={10} icon={<ArrowLeftIcon />} />
+            <IconButton onClick={handlePageUp} icon={<ArrowRightIcon />} />
+          </Box>
     </Layout>
   );
 };
