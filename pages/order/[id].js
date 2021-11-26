@@ -164,8 +164,6 @@ const Orderid = (props) => {
                   <Tr>
                     <Th display={{base:"none", lg:'inline-block'}}>Image</Th>
                     <Th>Name</Th>
-                    <Th isNumeric display={{base:"none", md:"table-cell"}}>Quantity</Th>
-                    <Th isNumeric display={{base:"table-cell", md:'none'}}>Quan</Th>
                     <Th isNumeric>Price</Th>
                   </Tr>
                 </Thead>
@@ -176,7 +174,6 @@ const Orderid = (props) => {
                         <Image src={item.image} width={50} height={50} />
                       </Td>
                       <Td>{item.name}</Td>
-                      <Td isNumeric>{item.quantity}x</Td>
                       <Td isNumeric>${item.price}</Td>
                     </Tr>
                   ))}

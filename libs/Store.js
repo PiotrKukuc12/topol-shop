@@ -10,9 +10,7 @@ const initialState = {
       : [],
   },
   userInfo: {
-    address: Cookies.get('address')
-     ? JSON.parse(Cookies.get('address'))
-     : {},
+    address: Cookies.get('address') ? JSON.parse(Cookies.get('address')) : {},
   },
 };
 

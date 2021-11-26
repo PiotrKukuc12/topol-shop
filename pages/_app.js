@@ -4,9 +4,9 @@ import theme from '../libs/theme';
 import Fonts from '../components/fonts';
 import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import NextNProgress from 'nextjs-progressbar';
+import { AnimatePresence } from 'framer-motion';
 
 const Website = ({ Component, pageProps }) => {
-
   return (
     <ChakraProvider theme={theme}>
       <Fonts />
@@ -20,7 +20,9 @@ const Website = ({ Component, pageProps }) => {
             showOnShallow={true}
             options={{ showSpinner: false }}
           />
-          <Component {...pageProps} />
+          <AnimatePresence initial={true} exitBeforeEnter>
+            <Component {...pageProps} />
+          </AnimatePresence>
         </PayPalScriptProvider>
       </StoreProvider>
     </ChakraProvider>

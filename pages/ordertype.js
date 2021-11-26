@@ -25,25 +25,21 @@ const Ordertype = () => {
   const handleSubmit = async () => {
     Cookies.set('payment', JSON.stringify(payment));
     Cookies.set('delivery', JSON.stringify(delivery));
-    if (delivery === 'InPost') {
-      router.push('/selectparcel');
-    } else {
-      setLoading(true);
-      const { data } = await axios.post('api/order', {
-        orderItems: cartItems,
-        shippingAddress: address,
-        paymentMethod: payment ? payment : 'Cash',
-        deliveryMethod: delivery,
-        // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
-      });
-      // clear cookies
-      setLoading(false);
-      Cookies.remove('cartItems');
-      Cookies.remove('address');
-      Cookies.remove('delivery');
-      Cookies.remove('percelAddress');
-      router.push(`/order/${data.id}`);
-    }
+    setLoading(true);
+    const { data } = await axios.post('api/order', {
+      orderItems: cartItems,
+      shippingAddress: address,
+      paymentMethod: payment ? payment : 'Cash',
+      deliveryMethod: delivery,
+      // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
+    });
+    // clear cookies
+    setLoading(false);
+    Cookies.remove('cartItems');
+    Cookies.remove('address');
+    Cookies.remove('delivery');
+    Cookies.remove('percelAddress');
+    router.push(`/order/${data.id}`);
   };
 
   return (
@@ -87,28 +83,7 @@ const Ordertype = () => {
             Courier
           </Button>
         </Stack>
-        <Stack
-          borderRadius='10px'
-          align='center'
-          backgroundColor={useColorModeValue('blackAlpha.50', 'whiteAlpha.50')}
-          border={useColorModeValue('1px solid gray', '1px solid white')}
-          width={{ base: '70%', md: '400px' }}
-          height='250px'
-        >
-          <Text fontSize={{ base: 'lg', md: 'xl' }} py={5}>
-            Cash on delivery
-          </Text>
-          <Button
-            fontWeight='medium'
-            onClick={() => setDelivery('DPD')}
-            w='80%'
-            border={delivery === 'DPD' ? '2px' : '0px'}
-            borderColor={delivery === 'DPD' ? 'blue.600' : ''}
-            w='80%'
-          >
-            DPD
-          </Button>
-        </Stack>
+       
       </Stack>
       <Stack
         display={

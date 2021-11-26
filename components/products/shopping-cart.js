@@ -19,20 +19,16 @@ const ShoppingCart = ({ item }) => {
     dispatch({ type: 'CART_DELETE_ITEM', payload: item._id });
   };
 
-  const updateCart = async (item, quantity) => {
+  const updateCart = async (item) => {
     const { data } = await axios.get(`/api/product/${item._id}`);
-    if (data.countInStock < quantity) {
-      window.alert('Product is out of stock');
-      return;
-    }
-    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } });
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...item } });
   };
   return (
     <div key={item._id}>
       <Stack ml={5} direction='row' mt={5}>
         <Box>
           <Image  
-            src={item.image}
+            src={item.images.image1}
             alt={item.title}
             placeholder='blur'
             blurDataURL='/images/placeholderimage.png'
@@ -47,17 +43,6 @@ const ShoppingCart = ({ item }) => {
             <IconButton onClick={handleDeleteButton} icon={<DeleteIcon />} />
           </Stack>
           <Text py={0}>${item.price}</Text>
-          <Select
-            // placeholder={item.quantity}
-            onChange={(e) => updateCart(item, e.target.value)}
-            width='70px'
-          >
-            {[...Array(item.countInStock).keys()].map((x) => (
-              <option key={x + 1} value={x + 1}>
-                {x + 1}
-              </option>
-            ))}
-          </Select>
         </Stack>
       </Stack>
       <Divider pt={2} mx={5} />

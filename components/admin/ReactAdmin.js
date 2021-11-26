@@ -1,4 +1,4 @@
-import { Admin, Resource, fetchUtils } from 'react-admin';
+import { Admin, Resource, fetchUtils, EditGuesser } from 'react-admin';
 import simpleRestProvider from 'ra-data-json-server';
 import { ProductsList, ProductEdit, CreateProduct } from './products/products';
 import { CreateOrder, OrderEdit, OrderList } from './orders/orders';

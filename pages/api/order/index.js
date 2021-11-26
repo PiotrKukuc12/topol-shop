@@ -12,10 +12,12 @@ handler.post(async (req, res) => {
 
     for (let i = 0; i < req.body.orderItems.length; i++) {
       const product = await Product.findById(req.body.orderItems[i]._id);
-      totalCount += product.price * req.body.orderItems[i].quantity;
+      totalCount += product.price;
     }
 
     totalCount = round2(totalCount);
+
+    console.log(req.body.orderItems);
 
     const newOrder = new Order({
       orderItems: req.body.orderItems,

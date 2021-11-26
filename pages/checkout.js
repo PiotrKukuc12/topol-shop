@@ -263,11 +263,10 @@ const Checkout = () => {
               h='280px'
               overflowY={cartItems.length >= 9 ? 'scroll' : 'none'}
             >
-              <Table size='sm'>
+              <Table size='md'>
                 <Thead>
                   <Tr>
                     <Th>Name</Th>
-                    <Th isNumeric>Quantity</Th>
                     <Th isNumeric>Price</Th>
                   </Tr>
                 </Thead>
@@ -275,7 +274,7 @@ const Checkout = () => {
                   {cartItems.map((item) => (
                     <Tr key={item._id}>
                       <Td>{item.name}</Td>
-                      <Td isNumeric>{item.quantity}x</Td>
+
                       <Td isNumeric>${item.price}</Td>
                     </Tr>
                   ))}

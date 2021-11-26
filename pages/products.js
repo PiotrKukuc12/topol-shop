@@ -25,6 +25,7 @@ import Product from '../models/Products';
 import { ArrowLeftIcon, ArrowRightIcon } from '@chakra-ui/icons';
 import ProductCart from '../components/products/product-cart';
 import { useRouter } from 'next/dist/client/router';
+import { motion } from 'framer-motion';
 
 const PAGE_SIZE = 6;
 
@@ -34,9 +35,7 @@ const Prods = (props) => {
   const [price, setPrice] = useState([0, 700]);
   const { categories, countProducts, products, pages } = props;
 
-  console.log(pages)
-
-  const filterSearch = ({ page, category, min, max,sort, price }) => {
+  const filterSearch = ({ page, category, min, max, sort, price }) => {
     const path = router.pathname;
     const { query } = router;
     if (page) query.page = page;
@@ -71,157 +70,165 @@ const Prods = (props) => {
 
   return (
     <Layout title='Products'>
-      <Stack
-        position='relative'
-        align={{ base: 'center', lg: 'normal' }}
-        direction={{ base: 'column', lg: 'row' }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Stack
-          pb={2}
-          border={useColorModeValue('1px solid black', '1px solid white')}
-          my={5}
-          borderRadius='10px'
-          w={{ base: '70%', lg: '300px' }}
-          height={{ base: '', lg: '500px' }}
-          marginLeft={5}
-          align='center'
+          position='relative'
+          align={{ base: 'center', lg: 'normal' }}
+          direction={{ base: 'column', lg: 'row' }}
         >
-          <Heading>Filter by</Heading>
-          <Accordion w='95%' mt={5} allowToggle>
-            <AccordionItem>
-              <h2>
-                <AccordionButton>
-                  <Box flex='1' textAlign='left'>
-                    <Heading fontSize='2xl'>Category</Heading>
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel>
-                <Stack align='start'>
-                  <Button
-                    fontWeight='normal'
-                    variant='link'
-                    value='all'
-                    onClick={categoryHandler}
-                  >
-                    All
-                  </Button>
-                  {categories.map((item) => (
+          <Stack
+            pb={2}
+            border={useColorModeValue('1px solid black', '1px solid white')}
+            my={5}
+            borderRadius='10px'
+            w={{ base: '70%', lg: '300px' }}
+            height={{ base: '', lg: '500px' }}
+            marginLeft={5}
+            align='center'
+          >
+            <Heading>Filter by</Heading>
+            <Accordion w='95%' mt={5} allowToggle>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box flex='1' textAlign='left'>
+                      <Heading fontSize='2xl'>Category</Heading>
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel>
+                  <Stack align='start'>
                     <Button
-                      pl={2}
-                      key={item}
                       fontWeight='normal'
                       variant='link'
-                      value={item}
+                      value='all'
                       onClick={categoryHandler}
                     >
-                      {item}
+                      All
                     </Button>
-                  ))}
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-            <AccordionItem>
-              <AccordionButton>
-                <Box flex='1' textAlign='left'>
-                  <Heading fontSize='2xl'>Sort by</Heading>
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                <Stack align='flex-start'>
-                  <Button
-                    onClick={sortHandler}
-                    value='featured'
-                    fontWeight='normal'
-                    variant='link'
-                  >
-                    Featured
-                  </Button>
-
-                  <Button
-                    onClick={sortHandler}
-                    value='lowest'
-                    ml={2}
-                    fontWeight='normal'
-                    variant='link'
-                  >
-                    Price: Low to High
-                  </Button>
-                  <Button
-                    onClick={sortHandler}
-                    value='highest'
-                    ml={2}
-                    fontWeight='normal'
-                    variant='link'
-                  >
-                    Price: High to Low
-                  </Button>
-                  <Button
-                    onClick={sortHandler}
-                    value='newest'
-                    ml={2}
-                    fontWeight='normal'
-                    variant='link'
-                  >
-                    Newest Arrivals
-                  </Button>
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-            <AccordionItem>
-              <h2>
+                    {categories.map((item) => (
+                      <Button
+                        pl={2}
+                        key={item}
+                        fontWeight='normal'
+                        variant='link'
+                        value={item}
+                        onClick={categoryHandler}
+                      >
+                        {item}
+                      </Button>
+                    ))}
+                  </Stack>
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
                 <AccordionButton>
                   <Box flex='1' textAlign='left'>
-                    <Heading fontSize='2xl'>Price</Heading>
+                    <Heading fontSize='2xl'>Sort by</Heading>
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
-              </h2>
-              <AccordionPanel>
-                <Box>
-                  <RangeSlider
-                    size='lg'
-                    aria-label={['min', 'max']}
-                    defaultValue={[0, 600]}
-                    // onChangeEnd={priceHandler}
-                    onChange={showPriceHandler}
-                    max={700}
-                  >
-                    <RangeSliderTrack>
-                      <RangeSliderFilledTrack />
-                    </RangeSliderTrack>
-                    <RangeSliderThumb index={0} />
-                    <RangeSliderThumb index={1} />
-                  </RangeSlider>
-                  <Stack mt={5} direction='row' justifyContent='space-between'>
-                    <Text>{price[0]} $</Text>
-                    <Text>{price[1]} $</Text>
+                <AccordionPanel>
+                  <Stack align='flex-start'>
+                    <Button
+                      onClick={sortHandler}
+                      value='featured'
+                      fontWeight='normal'
+                      variant='link'
+                    >
+                      Featured
+                    </Button>
+
+                    <Button
+                      onClick={sortHandler}
+                      value='lowest'
+                      ml={2}
+                      fontWeight='normal'
+                      variant='link'
+                    >
+                      Price: Low to High
+                    </Button>
+                    <Button
+                      onClick={sortHandler}
+                      value='highest'
+                      ml={2}
+                      fontWeight='normal'
+                      variant='link'
+                    >
+                      Price: High to Low
+                    </Button>
+                    <Button
+                      onClick={sortHandler}
+                      value='newest'
+                      ml={2}
+                      fontWeight='normal'
+                      variant='link'
+                    >
+                      Newest Arrivals
+                    </Button>
                   </Stack>
-                </Box>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
-          <Button w='90%' onClick={priceHandler}>
-            Filtr
-          </Button>
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box flex='1' textAlign='left'>
+                      <Heading fontSize='2xl'>Price</Heading>
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel>
+                  <Box>
+                    <RangeSlider
+                      size='lg'
+                      aria-label={['min', 'max']}
+                      defaultValue={[0, 600]}
+                      // onChangeEnd={priceHandler}
+                      onChange={showPriceHandler}
+                      max={700}
+                    >
+                      <RangeSliderTrack>
+                        <RangeSliderFilledTrack />
+                      </RangeSliderTrack>
+                      <RangeSliderThumb index={0} />
+                      <RangeSliderThumb index={1} />
+                    </RangeSlider>
+                    <Stack mt={5} direction='row' justifyContent='space-around'>
+                      <Text>{price[0]} $</Text>
+                      <Text>{price[1]} $</Text>
+                    </Stack>
+                    <Button w='90%' onClick={priceHandler}>
+                      Filtr
+                    </Button>
+                  </Box>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </Stack>
+
+          <Wrap
+            pb={50}
+            width='100%'
+            justify={{ base: 'space-around', md: 'center' }}
+            spacing={0}
+          >
+            {products.map((item) => (
+              <ProductCart
+                name={item.name}
+                price={item.price}
+                images={item.images}
+                id={item._id}
+              />
+            ))}
+          </Wrap>
         </Stack>
-        <Wrap pb={50} width='100%' justify='center' spacing={0}>
-          {products.map((item) => (
-            <ProductCart
-              name={item.name}
-              price={item.price}
-              image={item.image}
-              id={item._id}
-            />
-          ))}
-        </Wrap>
-      </Stack>
-      <Box mb='10px' w='100vw' justifyContent='center' align='center'>
-        <IconButton mr={10} icon={<ArrowLeftIcon />} />
-        <IconButton icon={<ArrowRightIcon />} />
-      </Box>
+        <Box mb='10px' w='100vw' justifyContent='center' align='center'>
+          <IconButton mr={10} icon={<ArrowLeftIcon />} />
+          <IconButton icon={<ArrowRightIcon />} />
+        </Box>
+      </motion.div>
     </Layout>
   );
 };

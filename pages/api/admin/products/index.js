@@ -11,17 +11,17 @@ handler.get(async (req, res) => {
     const searchQuery = req.query.q || '';
     const start = parseInt(req.query._start);
     const end = parseInt(req.query._end);
-    const price = req.query.price || ''
+    const price = req.query.price || '';
 
     const priceFilter =
-    price && price !== 'all'
-      ? {
-          price: {
-            $gte: Number(price.split('-')[0]),
-            $lte: Number(price.split('-')[1]),
-          },
-        }
-      : {};
+      price && price !== 'all'
+        ? {
+            price: {
+              $gte: Number(price.split('-')[0]),
+              $lte: Number(price.split('-')[1]),
+            },
+          }
+        : {};
 
     await db.Connect();
     const total = await Product.countDocuments();
@@ -45,10 +45,17 @@ handler.post(async (req, res) => {
     const newProduct = new Product({
       name: req.body.name,
       category: req.body.category,
-      countInStock: req.body.countInStock,
-      image: req.body.image,
+      images: {
+        image1: req.body.images.image1,
+        image2: req.body.images.image2,
+        image3: req.body.images.image3,
+        image4: req.body.images.image4,
+      },
       price: req.body.price,
       description: req.body.description,
+      size: req.body.size,
+      dimensions: req.body.dimensions,
+      materials: req.body.materials,
     });
 
     const product = await newProduct.save();

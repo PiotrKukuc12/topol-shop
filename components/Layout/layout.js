@@ -110,7 +110,7 @@ const Layout = ({ title, children }) => {
               <Text fontSize='xl' pr={6}>
                 Total: $
                 {Math.round(
-                  (cartItems.reduce((a, c) => a + c.quantity * c.price, 0) +
+                  (cartItems.reduce((a, c) => a + c.price, 0) +
                     Number.EPSILON) *
                     100
                 ) / 100}
