@@ -1,5 +1,6 @@
 import { Button } from '@chakra-ui/button';
 import { useColorModeValue } from '@chakra-ui/color-mode';
+import axios from 'axios';
 import {
   Box,
   Divider,
@@ -37,10 +38,11 @@ const Checkout = () => {
 
   const round2 = (num) => Math.round(num * 100 + Number.EPSILON) / 100; // 123.456 => 123.46
   const itemsPrice = round2(
-    cartItems.reduce((a, c) => a + c.price * c.quantity, 0)
+    cartItems.reduce((a, c) => a + c.price, 0)
   );
   const shippingPrice = itemsPrice > 200 ? 0 : 15;
   const totalPrice = round2(itemsPrice + shippingPrice);
+
   return (
     <Layout title='Checkout'>
       <Stack
@@ -107,14 +109,22 @@ const Checkout = () => {
 
               return errors;
             }}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={ async (values, { setSubmitting }) => {
               dispatch({
                 type: 'SAVE_SHIPPING_ADDRESS',
                 payload: values,
               });
-              Cookies.set('address', JSON.stringify(values));
+              const { data } = await axios.post('api/order', {
+                orderItems: cartItems,
+                shippingAddress: address,
+                paymentMethod: 'Online',
+                deliveryMethod: 'Courier',
+                // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
+              });
+              Cookies.remove('cartItems');
+              Cookies.remove('address');
               setSubmitting(false);
-              router.push('/ordertype');
+              router.push(`/order/${data.id}`);
             }}
           >
             {({

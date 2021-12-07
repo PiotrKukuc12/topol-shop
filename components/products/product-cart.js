@@ -21,8 +21,8 @@ const ProductCart = ({ name, price, id, images }) => {
           <Stack spacing={0}>
             <Box
               opacity={1}
-              w={{ base: '100%', md: '250px', lg: '340px' }}
-              h={{ base: '160px', md: '250px', lg: '340px' }}
+              w={{ base: '100%', md: '250px', lg: '320px' }}
+              h={{ base: '160px', md: '250px', lg: '320px' }}
               position='relative'
             >
               <Image src={images.image1} layout='fill' alt={name} />
@@ -35,8 +35,8 @@ const ProductCart = ({ name, price, id, images }) => {
               opacity={0}
               transition='.4s ease opacity'
               position='absolute'
-              w={{ base: '100%', md: '250px', lg: '340px' }}
-              h={{ base: '160px', md: '250px', lg: '340px' }}
+              w={{ base: '100%', md: '250px', lg: '320px' }}
+              h={{ base: '160px', md: '250px', lg: '320px' }}
             >
               <Image src={images.image2} layout='fill' alt={name} />
             </Box>
