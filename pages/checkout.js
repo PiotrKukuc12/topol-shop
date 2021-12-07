@@ -110,14 +110,14 @@ const Checkout = () => {
               return errors;
             }}
             onSubmit={ async (values, { setSubmitting }) => {
-              dispatch({
-                type: 'SAVE_SHIPPING_ADDRESS',
-                payload: values,
-              });
+              // dispatch({
+              //   type: 'SAVE_SHIPPING_ADDRESS',
+              //   payload: values,
+              // });
               const { data } = await axios.post('api/order', {
                 orderItems: cartItems,
-                shippingAddress: address,
-                paymentMethod: 'Online',
+                shippingAddress: values,
+                paymentMethod: 'PayPal',
                 deliveryMethod: 'Courier',
                 // COUNT ITEMS PRICE SHIPPING ETC AT BACKEND API
               });
@@ -282,7 +282,7 @@ const Checkout = () => {
                 </Thead>
                 <Tbody>
                   {cartItems.map((item) => (
-                    <Tr key={item._id}>
+                    <Tr key={item.name}>
                       <Td>{item.name}</Td>
 
                       <Td isNumeric>${item.price}</Td>

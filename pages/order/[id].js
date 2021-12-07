@@ -23,8 +23,8 @@ import { useColorModeValue } from '@chakra-ui/color-mode';
 
 const Orderid = (props) => {
   const { order } = props;
-  const [, paypalDispatch] = usePayPalScriptReducer();
-  // const [loadingPay, setLoadingPay] = useState(false);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+  const [loadingPay, setLoadingPay] = useState(false);
   const [paid, setPaid] = useState(null);
   const toast = useToast();
 
@@ -49,7 +49,7 @@ const Orderid = (props) => {
     loadPaypalScript();
   }, [order]);
 
-  function createOrder(actions) {
+  function createOrder(data, actions) {
     return actions.order.create({
       purchase_units: [
         {
@@ -157,7 +157,7 @@ const Orderid = (props) => {
                 'whiteAlpha.200'
               )}
               h={{base:'150px', lg:'340px'}}
-              overflowY='scroll'
+              overflowY='auto'
             >
               <Table size='sm'>
                 <Thead>
@@ -169,7 +169,7 @@ const Orderid = (props) => {
                 </Thead>
                 <Tbody>
                   {order.orderItems.map((item) => (
-                    <Tr key={item.id}>
+                    <Tr key={item.name}>
                       <Td display={{base:"none", lg:'inline-block'}}>
                         <Image src={item.image} width={50} height={50} />
                       </Td>
